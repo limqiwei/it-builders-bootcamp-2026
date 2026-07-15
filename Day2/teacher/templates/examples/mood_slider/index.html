@@ -1,0 +1,52 @@
+<style>
+
+
+    #mood-description {
+        margin: auto;
+        width: auto;
+        font-size: 3em;
+    }
+
+    #mood-icon {
+        margin: auto;
+        width: auto;
+        font-size: 5em;
+    }
+
+    #mood-section {
+        margin:auto;
+        text-align: center;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+    }
+
+    .question {
+        font-size: 2em;
+    }
+
+
+</style>
+<div id="mood-section">
+    <p class="question">How are you feeling right now?</p>
+    <input class="slider" id="mood-slider" type=range min="1" max="5" step="1" value=1>
+    <div id="mood-icon"></div>
+    <div id="mood-description"></div>
+</div>
+<script>
+    let moods = [
+        {'id': 1, 'description' : 'Lost', 'emoji_id': '128542'},
+        {'id': 2, 'description' : 'Confused', 'emoji_id': '128533'},
+        {'id': 3, 'description' : 'Neutral', 'emoji_id': '128528'},
+        {'id': 4, 'description' : 'Looking Foward', 'emoji_id': '128515'},
+        {'id': 5, 'description' : 'Excited', 'emoji_id': '128518'},
+    ]
+
+    document.getElementById('mood-slider').addEventListener('input', function (event)    {
+        let mood = moods.find((element) => element.id == this.value);
+        document.getElementById('mood-icon').innerHTML = `&#${mood.emoji_id};`
+        document.getElementById('mood-description').innerHTML = `${mood.description}`
+    });
+    
+</script>

@@ -1,0 +1,25 @@
+
+<div id="tree"></div>
+<script src="{{ url_for('static', filename='js/familytree.js') }}"></script>
+        <script>
+             let family = new FamilyTree("#tree", {
+                    // options
+                    nodeBinding: {
+                        field_0: "name",
+                        field_1: "country",
+                        img_0: "photo"
+                    },
+                    nodeTreeMenu: true,
+                    menu: {
+        pdf: { text: "Export PDF" },
+        png: { text: "Export PNG" },
+        svg: { text: "Export SVG" },
+        xml: { text: "Export XML" },
+        json: { text: "Export JSON" }
+    },
+                
+                    nodes: 
+                       [{"id":1,"pids":[2],"name":"Mom","gender":"female","country":"singapore","photo":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRd-MAF-bE6J0p8Yqz5x7yl9i0Cv1YQHVlaHQ&s/"},{"id":2,"pids":[1],"name":"Dad","gender":"male"},{"id":4,"mid":1,"fid":2,"name":"Me","gender":"male"},{"id":5,"mid":1,"fid":2,"name":"Sister","gender":"female"}]
+                    
+                });
+</script>
