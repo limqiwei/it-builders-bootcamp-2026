@@ -1,0 +1,487 @@
+{
+  "version": 1,
+  "savedAt": "2026-08-29T17:09:02.964Z",
+  "mainId": "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+  "data": [
+    {
+      "id": "1",
+      "data": {
+        "first name": "Qi Wei",
+        "last name": "Lim",
+        "birthday": "3 August 1998",
+        "gender": "M",
+        "about": "I like programming.",
+        "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuhMFZRpm3aROUzGdPgahLK7j-kxiDs5LbxKctsV-PNw&s=10",
+        "favourite food": "Mushroom Minced Meat Noodlle",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "data": {
+        "first name": "Kwang Meng",
+        "last name": "Lim",
+        "birthday": "",
+        "gender": "M",
+        "about": "A man of few words.",
+        "avatar": "data:image/png;base64,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",
+        "favourite food": "Egg",
+        "hobby": "Gardening"
+      },
+      "rels": {
+        "children": [
+          "1",
+          "58131f51-b7c3-4a66-a4b8-2ecfddb9432a",
+          "fcd75b29-b5d6-4459-bb67-104a331f0d00"
+        ],
+        "spouses": [
+          "3"
+        ],
+        "parents": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "data": {
+        "first name": "Gek Noi",
+        "last name": "Quek",
+        "birthday": "",
+        "gender": "F",
+        "about": "Loves to watch drama.",
+        "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrOiknO3yVf6NDV89UrivUAUyyIK94r92jGh24Fcbpj9ssheWsLmdeC6k&s=10",
+        "favourite food": "Mee Hoon Kuey",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "1",
+          "58131f51-b7c3-4a66-a4b8-2ecfddb9432a",
+          "fcd75b29-b5d6-4459-bb67-104a331f0d00"
+        ],
+        "spouses": [
+          "2"
+        ]
+      }
+    },
+    {
+      "id": "58131f51-b7c3-4a66-a4b8-2ecfddb9432a",
+      "data": {
+        "gender": "M",
+        "first name": "Jing Zhe",
+        "last name": "Lim",
+        "birthday": "",
+        "about": "",
+        "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDMXmVH_zGesb0H50x2JPXYbAp0iGnZkxIhrAQQ3B_Zg&s=10",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "3",
+          "2"
+        ]
+      }
+    },
+    {
+      "id": "fcd75b29-b5d6-4459-bb67-104a331f0d00",
+      "data": {
+        "gender": "F",
+        "first name": "Pei Xuan",
+        "last name": "Lim",
+        "birthday": "",
+        "about": "Loves to be home. ",
+        "avatar": "https://img.magnific.com/premium-psd/3d-avatar-3d-cartoon-character-3d-cute-asian-woman-avatar-smiling-girl-png-illustration-website_532044-917.jpg?semt=ais_hybrid&w=740&q=80",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "2",
+          "3"
+        ]
+      }
+    },
+    {
+      "id": "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+      "data": {
+        "gender": "M",
+        "first name": "Yong Quan",
+        "last name": "Lim",
+        "birthday": "",
+        "about": "",
+        "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_-0v37Prf342YSFhlJCXok05qLzRp8uSCK18tIgz6mg&s=10",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "2",
+          "93a96c5c-c59f-48bb-871f-0165abef91fd",
+          "8254c6ee-394f-4ea9-b421-c260b0de22d5",
+          "adcdbe03-8133-44a1-bc07-641f1fe77b93",
+          "febe2df0-9bf1-4ed8-a10a-a025f6180b1c"
+        ],
+        "spouses": [
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ]
+      }
+    },
+    {
+      "id": "20fa0634-c98f-4b39-9e22-4020e7f622b9",
+      "data": {
+        "gender": "F",
+        "first name": "Wei Long",
+        "last name": "Tan",
+        "birthday": "",
+        "about": "Makes my favourite kuehs",
+        "avatar": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT82btI3z4vNG1fjLScThy_8SNHU_nSibPhL9TUpJt9fg&s=10",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "2",
+          "93a96c5c-c59f-48bb-871f-0165abef91fd",
+          "8254c6ee-394f-4ea9-b421-c260b0de22d5",
+          "adcdbe03-8133-44a1-bc07-641f1fe77b93",
+          "febe2df0-9bf1-4ed8-a10a-a025f6180b1c"
+        ],
+        "spouses": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883"
+        ]
+      }
+    },
+    {
+      "id": "93a96c5c-c59f-48bb-871f-0165abef91fd",
+      "data": {
+        "gender": "M",
+        "first name": "First Uncle",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ],
+        "spouses": [
+          "f45229bb-cf90-4334-9d44-d73069d868dc"
+        ],
+        "children": [
+          "d25a419e-cbf3-42ad-af8e-2d8ebc05cec8",
+          "f97a129b-8761-4570-bdd1-c0e002df7ea0"
+        ]
+      }
+    },
+    {
+      "id": "8254c6ee-394f-4ea9-b421-c260b0de22d5",
+      "data": {
+        "gender": "F",
+        "first name": "First Aunt",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ],
+        "spouses": [
+          "dd9e07d1-193b-4f61-898e-2bd0bd9fc39f"
+        ],
+        "children": [
+          "1d85c01c-7dc1-478a-bc14-e9e08b41cd43",
+          "c47c532e-b93f-4873-89ff-d7b09d1552b5"
+        ]
+      }
+    },
+    {
+      "id": "adcdbe03-8133-44a1-bc07-641f1fe77b93",
+      "data": {
+        "gender": "F",
+        "first name": "Third Aunt",
+        "last name": "",
+        "birthday": "",
+        "about": "She has a few cats!",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ],
+        "children": [
+          "be57f359-1672-4296-a743-86f956c00d70",
+          "d1fc1df2-a1f2-47d1-b63a-1c54c5fff580"
+        ],
+        "spouses": [
+          "bb4ef3d0-1249-498b-b1b8-31ef4f3d1ab8"
+        ]
+      }
+    },
+    {
+      "id": "febe2df0-9bf1-4ed8-a10a-a025f6180b1c",
+      "data": {
+        "gender": "F",
+        "first name": "Second Aunt",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "ad1ca808-3b58-4dfd-8c5d-eb5b49e4e883",
+          "20fa0634-c98f-4b39-9e22-4020e7f622b9"
+        ],
+        "children": [
+          "a1160949-507a-44bc-a118-ec59efa64a1d"
+        ],
+        "spouses": [
+          "7d78cd45-6284-4f9b-aed1-4e15a205f04f"
+        ]
+      }
+    },
+    {
+      "id": "d25a419e-cbf3-42ad-af8e-2d8ebc05cec8",
+      "data": {
+        "gender": "M",
+        "first name": "Jia Yi",
+        "last name": "Lim",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "93a96c5c-c59f-48bb-871f-0165abef91fd",
+          "f45229bb-cf90-4334-9d44-d73069d868dc"
+        ]
+      }
+    },
+    {
+      "id": "f45229bb-cf90-4334-9d44-d73069d868dc",
+      "data": {
+        "gender": "F",
+        "first name": "First Uncle Wife",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "d25a419e-cbf3-42ad-af8e-2d8ebc05cec8",
+          "f97a129b-8761-4570-bdd1-c0e002df7ea0"
+        ],
+        "spouses": [
+          "93a96c5c-c59f-48bb-871f-0165abef91fd"
+        ]
+      }
+    },
+    {
+      "id": "f97a129b-8761-4570-bdd1-c0e002df7ea0",
+      "data": {
+        "gender": "M",
+        "first name": "Jia Wei",
+        "last name": "Lim",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "93a96c5c-c59f-48bb-871f-0165abef91fd",
+          "f45229bb-cf90-4334-9d44-d73069d868dc"
+        ]
+      }
+    },
+    {
+      "id": "dd9e07d1-193b-4f61-898e-2bd0bd9fc39f",
+      "data": {
+        "gender": "M",
+        "first name": "First Aunt Husband",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "1d85c01c-7dc1-478a-bc14-e9e08b41cd43",
+          "c47c532e-b93f-4873-89ff-d7b09d1552b5"
+        ],
+        "spouses": [
+          "8254c6ee-394f-4ea9-b421-c260b0de22d5"
+        ]
+      }
+    },
+    {
+      "id": "1d85c01c-7dc1-478a-bc14-e9e08b41cd43",
+      "data": {
+        "gender": "F",
+        "first name": "Second Ler ",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "8254c6ee-394f-4ea9-b421-c260b0de22d5",
+          "dd9e07d1-193b-4f61-898e-2bd0bd9fc39f"
+        ]
+      }
+    },
+    {
+      "id": "c47c532e-b93f-4873-89ff-d7b09d1552b5",
+      "data": {
+        "gender": "F",
+        "first name": "Angeline Ler",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "8254c6ee-394f-4ea9-b421-c260b0de22d5",
+          "dd9e07d1-193b-4f61-898e-2bd0bd9fc39f"
+        ]
+      }
+    },
+    {
+      "id": "7d78cd45-6284-4f9b-aed1-4e15a205f04f",
+      "data": {
+        "gender": "M",
+        "first name": "Mr Sandy",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "a1160949-507a-44bc-a118-ec59efa64a1d"
+        ],
+        "spouses": [
+          "febe2df0-9bf1-4ed8-a10a-a025f6180b1c"
+        ]
+      }
+    },
+    {
+      "id": "a1160949-507a-44bc-a118-ec59efa64a1d",
+      "data": {
+        "gender": "M",
+        "first name": "Jia Hao",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "febe2df0-9bf1-4ed8-a10a-a025f6180b1c",
+          "7d78cd45-6284-4f9b-aed1-4e15a205f04f"
+        ]
+      }
+    },
+    {
+      "id": "bb4ef3d0-1249-498b-b1b8-31ef4f3d1ab8",
+      "data": {
+        "gender": "M",
+        "first name": "Third Aunt's Husband",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "children": [
+          "be57f359-1672-4296-a743-86f956c00d70",
+          "d1fc1df2-a1f2-47d1-b63a-1c54c5fff580"
+        ],
+        "spouses": [
+          "adcdbe03-8133-44a1-bc07-641f1fe77b93"
+        ]
+      }
+    },
+    {
+      "id": "be57f359-1672-4296-a743-86f956c00d70",
+      "data": {
+        "gender": "M",
+        "first name": "Son",
+        "last name": "",
+        "birthday": "",
+        "about": "",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "adcdbe03-8133-44a1-bc07-641f1fe77b93",
+          "bb4ef3d0-1249-498b-b1b8-31ef4f3d1ab8"
+        ]
+      }
+    },
+    {
+      "id": "d1fc1df2-a1f2-47d1-b63a-1c54c5fff580",
+      "data": {
+        "gender": "F",
+        "first name": "Catherine",
+        "last name": "",
+        "birthday": "",
+        "about": "Did Arts and Festivals before.",
+        "avatar": "",
+        "favourite food": "",
+        "hobby": ""
+      },
+      "rels": {
+        "parents": [
+          "adcdbe03-8133-44a1-bc07-641f1fe77b93",
+          "bb4ef3d0-1249-498b-b1b8-31ef4f3d1ab8"
+        ]
+      }
+    }
+  ]
+}

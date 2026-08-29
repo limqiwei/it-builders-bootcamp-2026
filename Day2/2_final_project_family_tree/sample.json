@@ -1,0 +1,51 @@
+[
+    {
+        "id": "1",
+        "data": {
+            "first name": "Me",
+            "last name": "",
+            "birthday": "1998",
+            "gender": "M"
+        },
+        "rels": {
+            "parents": [
+                "2",
+                "3"
+            ]
+        }
+    },
+    {
+        "id": "2",
+        "data": {
+            "first name": "Dad",
+            "last name": "",
+            "birthday": "1961",
+            "gender": "M"
+        },
+        "rels": {
+            "children": [
+                "1"
+            ],
+            "spouses": [
+                "3"
+            ]
+        }
+    },
+    {
+        "id": "3",
+        "data": {
+            "first name": "Mom",
+            "last name": "",
+            "birthday": "1964",
+            "gender": "F"
+        },
+        "rels": {
+            "children": [
+                "1"
+            ],
+            "spouses": [
+                "2"
+            ]
+        }
+    }
+]

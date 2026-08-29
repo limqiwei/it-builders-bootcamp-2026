@@ -1,0 +1,107 @@
+-------------------------------
+The Basics of the Internet
+-------------------------------
+
+Internet
+--------------
+The internet can be understood as a group of computer interconnected together in a network. 
+Device in this network know about and can talk to each other. They can send data to each other.
+Data transmitted can be in many forms, ranging from text, audio, notifications, videos, light, motion etc.
+
+Web Server
+--------------
+When we browse the internet, visit different websites, we are talking to a computer exists physically somewhere. In might be Singapore, or might be from the other side of the world. 
+
+We refer to these computers as 'web server'. They 'serve' us with website.
+
+[Computer A] ------- HEY I NEED THIS -------------> [Computer B]
+
+[Computer A] <------- GOT IT HERE YOU GO ---------- [Computer B] 
+
+URL Address
+--------------
+It is the well-known name of a location of a web server. By knowing the address, we will be able to tell our computer to find the web server that is in charge of serving this website.
+
+google.com => Shows the google search page.
+youtube.com => Shows youtube.com
+
+When we visit a website, we are actually talking to the web server who decides what information to give us.
+
+Internet Protocol (IP) Address
+--------------
+It is another way to represent a well-known name of a location of a website.
+Our computer has an IP address, the web server has an IP address. It's like URL Address.
+
+
+29 Bidadari Park Dr, Singapore 367799If URL Address is in english (www.google.com), IP Address will be in network language.
+
+Singapore Postal Code - URL Address, IP Address
+
+Example: 29 Bidadari Park Dr, Singapore 367799
+We use "Blk 29 Bidadari Park Dr" 
+Postman who help us to send our letters use the postal code "367799"
+
+For private property, by knowing just the postal code, it is possible for the postman to send letters to your home location. For HDB, it will be postal code + unit number. 
+
+Domain Name
+---------------
+A website usually have more than 1 webpage. It is the part of the URL Address that groups multiple webpages together.
+
+https://google.com/                   => The home page of google.
+https://google.com/search?q=cat     => The search page of google, with a search query 'cat'
+
+- The domain name here is: 'google.com'
+- Without specifying anything after the domain, the default page is used.
+- /search points to the search result page of google.
+- ?q=cat are variables that we can provide so the webserver knows additional information to what we are finding. In /search?=cat we are telling google server "We want to use google search to search for the word 'cat'.
+
+In the address example, it is like the street name.
+
+- 29 Bidadari Park Dr, Singapore 367799
+- Street Name: Bidadari Park Dr
+
+- I do not know what block yet, so I go drive into the carpark first.
+- The first block I see is the default block.
+- The rest of the HDB blocks are the other webpages. 
+- I can visit each block, just like webpages.
+
+
+Domain Name System (DNS)
+-------------------- 
+- It is a system that maps the domain name to an IP address of a web server.
+- Basically what URL Address points to what IP.
+
+DNS Name Server
+--------------------
+- A domain name is easier to remember than the IP Address. So we tend to use that more often.
+- A computer that specializes in keeping track of mapping of domain names to web servers.
+- It is a reliable source of truth.
+- We need this because we would not be able to keep track of all the domains in the entire world.
+- When a new website is added then someone or something needs to keep track.
+
+
+-----------------------------------------------------------------------------
+- Improve on the transition from 'The Internet Network' 
+- Combine Domain Name, Domain Name System, DNS Server
+- Remove INAN root zone and all the protocol information.
+- Example http protocol as the 'language' or the letter.
+- Use Address Example : Blk, Street, Unit/level, To: VS URL Address.
+
+div, img,
+
+<div style="background-color:yellow">
+	
+</div>
+
+
+
+
+
+
+
+
+
+
+
+ 
+
