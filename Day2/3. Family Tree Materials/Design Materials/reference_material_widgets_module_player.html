@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Examples Gallery - MOCKUP PREVIEW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+<!-- Only needed for the popup / toast examples below -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Only needed for the family tree examples below (same tools you already use) -->
+<script src="https://unpkg.com/d3@7"></script>
+<script src="https://unpkg.com/family-chart@latest/dist/family-chart.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/family-chart@latest/dist/styles/family-chart.css">
+
+<style>
+  :root {
+    --green: #1a6b56;
+    --green-dark: #123f33;
+    --cream: #f5efd9;
+    --card: #fffdf6;
+    --orange: #ee6b4d;
+    --blue: #1d3f8f;
+    --gold: #f2a922;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Gabarito', 'Roboto', 'Arial';
+    background: var(--cream);
+    color: #222;
+    font-size: 19px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--green);
+    color: white;
+    padding: 40px 20px 54px;
+    text-align: center;
+    position: relative;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 2.6em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.2em;
+  }
+  /* scalloped bottom edge, like the answer key PDFs */
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 24px;
+    background-image: radial-gradient(circle at 12px 0, transparent 12px, var(--green) 13px);
+    background-size: 24px 24px;
+    background-repeat: repeat-x;
+  }
+
+  .banner-tag {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-weight: 800;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Instructions banner ---------- */
+  .howto {
+    max-width: 820px;
+    margin: 36px auto 10px;
+    background: white;
+    border: 2px solid var(--orange);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .howto h2 {
+    margin: 0 0 8px;
+    color: var(--blue);
+    font-size: 1.3em;
+  }
+  .howto p { margin: 6px 0; line-height: 1.6; font-size: 0.95em; }
+
+  /* ---------- Category pills ---------- */
+  .categories {
+    max-width: 900px;
+    margin: 26px auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 0 20px;
+  }
+  .categories button {
+    border: 2px solid var(--green);
+    background: white;
+    color: var(--green);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9em;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .categories button.active {
+    background: var(--green);
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #7a7360;
+    font-size: 1em;
+    padding: 30px 20px;
+    margin: 0;
+  }
+
+  /* ---------- Example card ---------- */
+  .gallery {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .example-card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid #e4dcc0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .example-head {
+    padding: 18px 22px;
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .example-num {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    font-weight: 800;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .example-head h3 {
+    margin: 0;
+    color: var(--green-dark);
+    font-size: 1.35em;
+    flex: 1;
+  }
+  .example-head .tag {
+    background: var(--blue);
+    color: white;
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .example-desc {
+    padding: 12px 22px 0 78px;
+    color: #444;
+    font-size: 1em;
+  }
+
+  .example-preview {
+    padding: 30px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: repeating-linear-gradient(45deg, #faf7ec, #faf7ec 10px, #f4efdc 10px, #f4efdc 20px);
+    min-height: 90px;
+  }
+
+  .example-actions {
+    padding: 16px 22px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-top: 1px dashed #ddd3ae;
+  }
+
+  .btn-small {
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  .btn-view-code { background: var(--blue); color: white; }
+
+  .code-panel {
+    display: none;
+    padding: 4px 22px 20px;
+  }
+  .code-panel.open { display: block; }
+
+  .code-panel .instructions {
+    background: #fff7e0;
+    border: 1px dashed var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+  .code-panel .instructions.tip {
+    background: #eef6ff;
+    border-color: var(--blue);
+  }
+
+  .code-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 12px 0 5px;
+  }
+
+  .code-label {
+    font-weight: 800;
+    color: var(--green-dark);
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-copy {
+    flex: none;
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 0.82em;
+    background: var(--green);
+    color: white;
+  }
+  .btn-copy.copied { background: var(--gold); }
+
+  pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 16px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.6;
+    margin: 0;
+  }
+  pre code { font-family: 'Consolas', 'Courier New', monospace; white-space: pre; }
+
+  /* ---------- Preset pickers (used by many examples below) ---------- */
+  .preset-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+  .preset-bar select {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.92em;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 2px solid var(--green);
+    background: white;
+    color: var(--green-dark);
+    cursor: pointer;
+  }
+  .preset-bar button.preset-btn {
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.92em;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--green);
+    background: white;
+    color: var(--green-dark);
+    cursor: pointer;
+  }
+  .preset-bar button.preset-btn.active {
+    background: var(--green);
+    color: white;
+  }
+
+  /* ---------- Live family tree previews ---------- */
+  .example-preview.tree-preview {
+    display: block;
+    padding: 18px;
+  }
+  .tree-mount {
+    width: 100%;
+    height: 320px;
+    background-color: rgba(245, 245, 220, 0.7);
+    border-radius: 12px;
+  }
+  .tree-mount.tall { height: 420px; }
+
+  .f3 { --background-color: white; --text-color: black; }
+
+  .demo-caption {
+    text-align: center;
+    font-size: 0.8em;
+    color: #7a7360;
+    margin-top: 10px;
+  }
+
+  /* ================= DEMO WIDGET STYLES (these are examples of what a kid would copy) ================= */
+
+  /* Example 2: Glow Button. Colors are set with CSS variables so the preset
+     picker can swap them live - your own copied CSS uses plain colors instead,
+     see the code panel. */
+  .demo-glow-btn {
+    background-color: var(--glow-bg, #ff5da2);
+    color: white;
+    border-style: none;
+    padding-top: 14px;
+    padding-right: 28px;
+    padding-bottom: 14px;
+    padding-left: 28px;
+    font-size: 1.1em;
+    font-weight: 800;
+    border-radius: 999px;
+    cursor: pointer;
+    transition-duration: 0.25s;
+  }
+  .demo-glow-btn:hover {
+    background-color: var(--glow-bg-hover, #ff2f85);
+    box-shadow: 0 0 25px var(--glow-bg, #ff5da2);
+    transform: scale(1.08);
+  }
+
+  /* Example 11: confirm popup demo */
+  .demo-delete-btn {
+    background-color: #d32f2f;
+    color: white;
+    border-style: none;
+    padding: 13px 22px;
+    font-size: 1em;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  #confirmResult {
+    font-weight: 700;
+    color: var(--green-dark);
+    min-height: 1.4em;
+  }
+
+  /* Example 12: countdown demo */
+  #countdownText {
+    font-size: 2.4em;
+    font-weight: 800;
+    color: var(--blue);
+    min-width: 90px;
+    text-align: center;
+  }
+  .btn-start { background: var(--orange); color: white; }
+
+  /* Example 13: curtain reveal demo */
+  .curtain-wrap {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f4f4f5;
+  }
+  .curtain-screen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    user-select: none;
+  }
+  .curtain-screen.left { left: 0; background-color: #2563eb; }
+  .curtain-screen.right { right: 0; background-color: #1e293b; }
+  .curtain-reveal-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.3em;
+    color: var(--green-dark);
+  }
+
+  /* Example 15: background picker demo */
+  .bg-preview-box {
+    width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #e4dcc0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: white;
+    font-weight: 800;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    padding-bottom: 14px;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <span class="banner-tag">IT Builders Bootcamp</span>
+  <h1>🎨 Code Examples Gallery</h1>
+  <p>MOCKUP PREVIEW — layout &amp; style only, 17 sample widgets including live family tree ones</p>
+</header>
+
+<div class="howto">
+  <h2>📋 How this page works</h2>
+  <p>Scroll down and look at each example. Every example has a <b>number</b> — if you get stuck, tell us the number so we can help fast!</p>
+  <p>Some examples have a <b>dropdown or buttons above the preview</b> — try a few before you copy. The code shown always matches whichever one is currently picked.</p>
+  <p>If you like one, click <b>View Code</b> to see the code. Copy it into your own website, in the matching spot (the instructions tell you exactly where).</p>
+  <p>Don't edit anything on this page — it's just for looking!</p>
+</div>
+
+<div class="categories">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="inline">Inline CSS</button>
+  <button data-filter="buttons">Buttons</button>
+  <button data-filter="familytree">Family Tree</button>
+  <button data-filter="popups">Popups</button>
+  <button data-filter="effects">Effects</button>
+</div>
+
+<div class="gallery">
+
+  <!-- ============ EXAMPLE 1 ============ -->
+  <div class="example-card" data-category="inline">
+    <div class="example-head">
+      <div class="example-num">1</div>
+      <h3>🎉 Colorful Info Box</h3>
+      <span class="tag">Inline CSS</span>
+    </div>
+    <div class="example-desc">The simplest kind of example — no separate &lt;style&gt; section needed at all! Every style lives right inside the tag.</div>
+    <div class="example-preview">
+      <div class="preset-bar">
+        <label for="ex1-preset">Try a preset:</label>
+        <select id="ex1-preset" onchange="applyBoxPreset(this.value)">
+          <option value="0">Sunshine Yellow</option>
+          <option value="1">Ocean Blue</option>
+          <option value="2">Bubblegum Pink</option>
+          <option value="3">Forest Green</option>
+        </select>
+      </div>
+      <div id="ex1-box" style="background-color:#ffdf6b;color:#123f33;padding-top:16px;padding-right:26px;padding-bottom:16px;padding-left:26px;border-radius:14px;font-weight:800;font-size:1.15em;text-align:center;">🎉 Welcome to my page!</div>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code1')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code1">
+      <div class="instructions">
+        <b>How to use:</b> No &lt;style&gt; section needed — just copy the line below straight into your &lt;body&gt;.
+        Everything you can change is right there inside <code>style="..."</code>, one property at a time.
+        Try the preset dropdown above, then copy whichever one you like.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">HTML code (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code1-html">&lt;div style="background-color:#ffdf6b; color:#123f33; padding-top:16px; padding-right:26px; padding-bottom:16px; padding-left:26px; border-radius:14px; font-weight:800; font-size:1.15em; text-align:center;"&gt;
+  🎉 Welcome to my page!
+&lt;/div&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 2 ============ -->
+  <div class="example-card" data-category="buttons">
+    <div class="example-head">
+      <div class="example-num">2</div>
+      <h3>✨ Glowing Button</h3>
+      <span class="tag">CSS + Hover</span>
+    </div>
+    <div class="example-desc">A button that glows and grows bigger when you hover your mouse over it.</div>
+    <div class="example-preview">
+      <div class="preset-bar">
+        <label for="ex2-preset">Try a preset:</label>
+        <select id="ex2-preset" onchange="applyGlowPreset(this.value)">
+          <option value="0">Pink Glow</option>
+          <option value="1">Blue Glow</option>
+          <option value="2">Green Glow</option>
+          <option value="3">Orange Glow</option>
+        </select>
+      </div>
+      <button class="demo-glow-btn" id="ex2-btn" style="--glow-bg:#ff5da2; --glow-bg-hover:#ff2f85;">Hover me!</button>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code2')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code2">
+      <div class="instructions">
+        <b>How to use:</b> Copy the CSS below into your &lt;style&gt; section. Then add a button anywhere in your &lt;body&gt; like this:
+        <code>&lt;button class="glow-btn"&gt;Hover me!&lt;/button&gt;</code>.
+        Notice <code>border-style: none;</code> instead of <code>border: none;</code>, four separate <code>padding-*</code> lines instead of one <code>padding: 14px 28px;</code> line, and <code>transition-duration: 0.25s;</code> instead of <code>transition: 0.25s;</code> — same result, but each line only changes ONE thing.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (copy into &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code2-css">.glow-btn {
+  background-color: #ff5da2;
+  color: white;
+  border-style: none;
+  padding-top: 14px;
+  padding-right: 28px;
+  padding-bottom: 14px;
+  padding-left: 28px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 999px;
+  cursor: pointer;
+  transition-duration: 0.25s;
+}
+.glow-btn:hover {
+  background-color: #ff2f85;
+  box-shadow: 0 0 25px #ff5da2;
+  transform: scale(1.08);
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 3 ============ -->
+  <div class="example-card" data-category="popups">
+    <div class="example-head">
+      <div class="example-num">3</div>
+      <h3>💬 Beautiful Alert Popup</h3>
+      <span class="tag">JS + Library</span>
+    </div>
+    <div class="example-desc">A pretty popup message box, way nicer than the boring browser alert().</div>
+    <div class="example-preview">
+      <div class="preset-bar">
+        <label for="ex3-preset">Try a preset:</label>
+        <select id="ex3-preset" onchange="applyAlertPreset(this.value)">
+          <option value="0">Friendly Purple</option>
+          <option value="1">Success Green</option>
+          <option value="2">Warning Orange</option>
+          <option value="3">Error Red</option>
+        </select>
+      </div>
+      <button class="btn-small" style="background-color:#7c5cff;color:white;padding:13px 24px;border-radius:8px;border-style:none;font-weight:700;cursor:pointer;font-family:inherit;"
+        onclick="beautifulAlert()">Click me!</button>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code3')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code3">
+      <div class="instructions">
+        <b>How to use:</b> This one needs 1 extra line in your &lt;head&gt; (only once, even if you use more popup examples).
+        Then copy the &lt;script&gt; code below and the button. Pick a preset above first — the code updates to match.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"&gt;&lt;/script&gt;</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code3-js">function beautifulAlert() {
+  Swal.fire({
+    icon: 'info',
+    text: 'Hello there!',
+    confirmButtonColor: '#7c5cff'
+  });
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Then call it from a button (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;button onclick="beautifulAlert()"&gt;Click me!&lt;/button&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 4 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">4</div>
+      <h3>🌳 Family Tree Card Colors</h3>
+      <span class="tag">CSS Selectors</span>
+    </div>
+    <div class="example-desc">Change the background color of the male and female cards in your family tree. This is a live mini tree — not a screenshot.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex4-preset">Try a preset:</label>
+        <select id="ex4-preset" onchange="applyCardColorPreset(this.value)">
+          <option value="0">Ocean Blue</option>
+          <option value="1">Sunset</option>
+          <option value="2">Forest</option>
+          <option value="3">Galaxy</option>
+        </select>
+      </div>
+      <div id="chart4" class="f3 tree-mount"></div>
+      <p class="demo-caption">3-person sample tree, just for this demo</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code4')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code4">
+      <div class="instructions">
+        <b>How to use:</b> You already have rules like this in your &lt;style&gt; section (look for <code>.card-male</code> and <code>.card-female</code>).
+        Just change the <code>background-color</code> values to the preset you picked above.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (replace in your &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code4-css"></code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 5 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">5</div>
+      <h3>🖼️ Family Tree Card Photo Shape</h3>
+      <span class="tag">JS Preset</span>
+    </div>
+    <div class="example-desc">The family-chart tool comes with 5 built-in card looks. Try each one — this changes how every card on your tree is drawn.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex5-preset">Try a preset:</label>
+        <select id="ex5-preset" onchange="applyCardStylePreset(this.value)">
+          <option value="default">default (plain box)</option>
+          <option value="rect">rect (square photo)</option>
+          <option value="imageCircle" selected>imageCircle (round photo)</option>
+          <option value="imageRect">imageRect (big square photo)</option>
+          <option value="imageCircleRect">imageCircleRect (round photo, wide box)</option>
+        </select>
+      </div>
+      <div id="chart5" class="f3 tree-mount"></div>
+      <p class="demo-caption">3-person sample tree, just for this demo</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code5')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code5">
+      <div class="instructions">
+        <b>How to use:</b> Find the line in your &lt;script&gt; that looks like <code>const card = f3Chart.setCardHtml()</code>.
+        Right after it, add this one line (or change the word inside the quotes if you already have a similar line).
+        Valid words are: <code>default</code>, <code>rect</code>, <code>imageCircle</code>, <code>imageRect</code>, <code>imageCircleRect</code>.
+        Bigger card styles like <code>imageRect</code> can crowd the connecting lines — if that happens, see <b>Example 14</b> to give the cards more room.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (add near "setCardHtml" in your &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code5-js">card.setStyle('imageCircle');</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 6 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">6</div>
+      <h3>⭐ Family Tree Spotlight Outline</h3>
+      <span class="tag">CSS Selectors</span>
+    </div>
+    <div class="example-desc">The card in the middle of your tree (the "main" person) gets a glowing outline. Change its width, style, and color separately.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex6-preset">Try a preset:</label>
+        <select id="ex6-preset" onchange="applyOutlinePreset(this.value)">
+          <option value="0">Yellow Spotlight</option>
+          <option value="1">Blue Dots</option>
+          <option value="2">Green Double Line</option>
+          <option value="3">Red Dashes</option>
+        </select>
+      </div>
+      <div id="chart6" class="f3 tree-mount"></div>
+      <p class="demo-caption">3-person sample tree, just for this demo</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code6')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code6">
+      <div class="instructions">
+        <b>How to use:</b> Find <code>.card-main .card-inner</code> in your &lt;style&gt; section. It probably has one line like
+        <code>outline: 4px solid yellow;</code> — replace that ONE line with the THREE lines below instead.
+        Each line only controls one thing: how thick the outline is, what pattern it draws, and what color it is.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (replace "outline:" in your &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code6-css"></code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 7 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">7</div>
+      <h3>🖇️ Family Tree Lines &amp; Frame</h3>
+      <span class="tag">CSS Selectors</span>
+    </div>
+    <div class="example-desc">Change the color of the lines connecting relatives, and the border around the whole tree — border split into three separate parts.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex7-preset">Try a preset:</label>
+        <select id="ex7-preset" onchange="applyLinesFramePreset(this.value)">
+          <option value="0">Grape</option>
+          <option value="1">Ocean</option>
+          <option value="2">Sunset</option>
+          <option value="3">Forest</option>
+        </select>
+      </div>
+      <div id="chart7" class="f3 tree-mount"></div>
+      <p class="demo-caption">3-person sample tree, just for this demo</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code7')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code7">
+      <div class="instructions">
+        <b>How to use:</b> Find <code>.links_view path.link</code> and <code>#f3Canvas</code> in your &lt;style&gt; section and replace them with this.
+        Notice <code>border:</code> got split into <code>border-width</code>, <code>border-style</code> and <code>border-color</code> — three separate lines instead of one.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (replace in your &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code7-css"></code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 8 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">8</div>
+      <h3>🌗 Light / Dark Mode</h3>
+      <span class="tag">CSS + JS</span>
+    </div>
+    <div class="example-desc">One button that flips your whole page (and your family tree) between light mode and dark mode.</div>
+    <div class="example-preview tree-preview" id="ex8-wrap">
+      <div class="preset-bar">
+        <button class="preset-btn active" id="ex8-light-btn" onclick="setTreeTheme('light')">☀️ Light</button>
+        <button class="preset-btn" id="ex8-dark-btn" onclick="setTreeTheme('dark')">🌙 Dark</button>
+      </div>
+      <div id="chart8" class="f3 tree-mount"></div>
+      <p class="demo-caption">Here we only flip this little box, so the rest of the gallery stays visible. On your own page, copy the code exactly as shown — it flips document.body, so it flips your WHOLE page.</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code8')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code8">
+      <div class="instructions">
+        <b>How to use:</b> Copy the CSS into your &lt;style&gt; section, and the JS into your &lt;script&gt; section. Then add the two buttons anywhere in your &lt;body&gt;.
+        The family-chart tool already reads <code>--background-color</code> and <code>--text-color</code> off the <code>.f3</code> element — that's why setting them is enough to re-theme your whole tree.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (copy into &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>.f3.dark-mode {
+  --background-color: #1e1e1e;
+  --text-color: #f5f5f5;
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;, after your chart is created)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>const treeElement = document.getElementById('FamilyChart');
+
+function turnOnDarkMode() {
+  treeElement.classList.add('dark-mode');
+  document.body.style.backgroundColor = '#1e1e1e';
+  document.body.style.color = 'white';
+}
+
+function turnOnLightMode() {
+  treeElement.classList.remove('dark-mode');
+  document.body.style.backgroundColor = 'white';
+  document.body.style.color = 'black';
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Buttons (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;button onclick="turnOnLightMode()"&gt;☀️ Light&lt;/button&gt;
+&lt;button onclick="turnOnDarkMode()"&gt;🌙 Dark&lt;/button&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 9 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">9</div>
+      <h3>✅ Success Toast After Saving</h3>
+      <span class="tag">JS + Library</span>
+    </div>
+    <div class="example-desc">Click a card below, change something in the form, then click away — a little "Saved!" message pops up in the corner.</div>
+    <div class="example-preview tree-preview">
+      <div id="chart9" class="f3 tree-mount tall"></div>
+      <p class="demo-caption">Click a card, edit a field, then click outside the form to save it</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code9')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code9">
+      <div class="instructions">
+        <b>How to use:</b> Your file already has a line like <code>editTree.setEdit()</code>. Copy this code right after that line.
+        <code>editTree.setOnChange(...)</code> is a built-in hook that runs every time you save a change in the edit form — it's the exact same hook <code>export_helper.js</code> uses to auto-save your tree.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Add this inside &lt;head&gt;&lt;/head&gt; (only needed once, skip if you already have it)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"&gt;&lt;/script&gt;</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Script code (add after editTree.setEdit() in your &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>function showSavedToast() {
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',
+    title: 'Saved!',
+    showConfirmButton: false,
+    timer: 1500
+  });
+}
+
+editTree.setOnChange(showSavedToast);</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 10 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">10</div>
+      <h3>🔍 Click a Photo to Zoom In</h3>
+      <span class="tag">JS + &lt;dialog&gt;</span>
+    </div>
+    <div class="example-desc">Click any person's photo below — a popup box is built by JavaScript and shows the photo bigger.</div>
+    <div class="example-preview tree-preview">
+      <div id="chart10" class="f3 tree-mount"></div>
+      <p class="demo-caption">Click a photo above to try it</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code10')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code10">
+      <div class="instructions">
+        <b>How to use:</b> Copy this into your &lt;script&gt; section, after your chart is created. Unlike Teacher Joshua's version, this one doesn't need a
+        <code>&lt;dialog&gt;</code> already sitting in your HTML — the JavaScript builds a brand new one, shows it, then throws it away each time.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>function showImagePopup(imageUrl) {
+  const dialog = document.createElement('dialog');
+
+  const img = document.createElement('img');
+  img.src = imageUrl;
+  img.style.maxWidth = '100%';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.textContent = 'Close';
+  closeBtn.onclick = function () {
+    dialog.close();
+  };
+
+  dialog.appendChild(img);
+  dialog.appendChild(closeBtn);
+  document.body.appendChild(dialog);
+
+  dialog.showModal();
+
+  dialog.addEventListener('close', function () {
+    dialog.remove();
+  });
+}
+
+function connectPhotosToPopup() {
+  const photos = document.querySelectorAll('#FamilyChart .card img');
+  photos.forEach(function (photo) {
+    photo.style.cursor = 'pointer';
+    photo.addEventListener('click', function (event) {
+      event.stopPropagation();
+      showImagePopup(photo.src);
+    });
+  });
+}
+
+connectPhotosToPopup();
+f3Chart.setAfterUpdate(connectPhotosToPopup);</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 11 ============ -->
+  <div class="example-card" data-category="popups">
+    <div class="example-head">
+      <div class="example-num">11</div>
+      <h3>❓ Are You Sure? (Confirm Popup)</h3>
+      <span class="tag">JS Basics</span>
+    </div>
+    <div class="example-desc">A yes/no popup that asks before doing something you can't easily undo — like deleting a family member.</div>
+    <div class="example-preview">
+      <button class="demo-delete-btn" onclick="tryDelete()">🗑️ Delete Person</button>
+      <div id="confirmResult"></div>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code11')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code11">
+      <div class="instructions">
+        <b>How to use:</b> <code>confirm(...)</code> is built into every browser — no library needed. It pauses your page and waits for the person to click OK or Cancel,
+        then gives you back <code>true</code> or <code>false</code>.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>function tryDelete() {
+  const isSure = confirm('Delete this person? This cannot be undone.');
+
+  if (isSure) {
+    console.log('Deleting now...');
+  } else {
+    console.log('Cancelled - nothing was deleted.');
+  }
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Button (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;button onclick="tryDelete()"&gt;🗑️ Delete Person&lt;/button&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 12 ============ -->
+  <div class="example-card" data-category="effects">
+    <div class="example-head">
+      <div class="example-num">12</div>
+      <h3>⏱️ 3-2-1 Countdown</h3>
+      <span class="tag">JS Basics</span>
+    </div>
+    <div class="example-desc">Counts down from 3, then shows "Let's go!". Useful before revealing something exciting.</div>
+    <div class="example-preview">
+      <div id="countdownText">3</div>
+      <button class="btn-small btn-start" onclick="startCountdown()">▶️ Start</button>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code12')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code12">
+      <div class="instructions">
+        <b>How to use:</b> <code>setInterval(...)</code> repeats the code inside it every 1000 milliseconds (1 second), until you tell it to stop with <code>clearInterval(...)</code>.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>let count = 3;
+const countdownText = document.getElementById('countdownText');
+
+function startCountdown() {
+  countdownText.textContent = count;
+
+  const timer = setInterval(function () {
+    count = count - 1;
+
+    if (count > 0) {
+      countdownText.textContent = count;
+    } else {
+      countdownText.textContent = "Let's go!";
+      clearInterval(timer);
+      count = 3;
+    }
+  }, 1000);
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">HTML (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;div id="countdownText"&gt;3&lt;/div&gt;
+&lt;button onclick="startCountdown()"&gt;▶️ Start&lt;/button&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 13 ============ -->
+  <div class="example-card" data-category="effects">
+    <div class="example-head">
+      <div class="example-num">13</div>
+      <h3>🎬 Reveal / Hide a Curtain</h3>
+      <span class="tag">JS + Animation</span>
+    </div>
+    <div class="example-desc">Click either side of the curtain below — it slides away and disappears, revealing what's behind it.</div>
+    <div class="example-preview">
+      <div class="curtain-wrap" id="curtainWrap">
+        <div class="curtain-reveal-text">🎉 Ta-da!</div>
+        <div class="curtain-screen left" id="curtainLeft">Click me</div>
+        <div class="curtain-screen right" id="curtainRight">Click me</div>
+      </div>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code13')">👀 View Code</button>
+      <button class="btn-small btn-view-code" onclick="resetCurtain()">🔁 Reset</button>
+    </div>
+    <div class="code-panel" id="code13">
+      <div class="instructions">
+        <b>How to use:</b> <code>.animate(...)</code> is built into the browser — it slides an element sideways and fades it out, then <code>.remove()</code> deletes it from the page.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (copy into &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>function slideAway(element, direction) {
+  const startX = 0;
+  const endX = direction === 'left' ? '-100%' : '100%';
+
+  const animation = element.animate(
+    [
+      { transform: 'translateX(' + startX + 'px)', opacity: 1 },
+      { transform: 'translateX(' + endX + ')', opacity: 0 }
+    ],
+    { duration: 700, easing: 'ease-out', fill: 'forwards' }
+  );
+
+  animation.onfinish = function () {
+    element.remove();
+  };
+}
+
+document.getElementById('curtainLeft').addEventListener('click', function () {
+  slideAway(document.getElementById('curtainLeft'), 'left');
+  slideAway(document.getElementById('curtainRight'), 'right');
+});
+
+document.getElementById('curtainRight').addEventListener('click', function () {
+  slideAway(document.getElementById('curtainLeft'), 'left');
+  slideAway(document.getElementById('curtainRight'), 'right');
+});</code></pre>
+      <div class="instructions tip">
+        <b>Want the fancier version from Teacher Joshua's demo?</b> That one asks "Are you sure?" first, then counts down 3-2-1, THEN reveals.
+        That's more than 3 steps stitched together, so build it yourself out of pieces you already have:
+        <ol style="margin:8px 0 0 20px; padding:0;">
+          <li>Use <b>Example 11's</b> <code>confirm(...)</code> — only continue if it returns <code>true</code>.</li>
+          <li>If confirmed, call <b>Example 12's</b> <code>startCountdown()</code>.</li>
+          <li>Instead of showing "Let's go!" when the countdown finishes, call this example's <code>slideAway(...)</code> on both curtain pieces.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 14 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">14</div>
+      <h3>🧩 Family Tree Card Spacing</h3>
+      <span class="tag">JS Fix</span>
+    </div>
+    <div class="example-desc">If your cards show lots of info (name, birthday, favourite food, hobby...) they get big — and packed-together cards can hide the connecting lines behind them. Space the cards out so every line stays visible.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex14-preset">Try a preset:</label>
+        <select id="ex14-preset" onchange="applySpacingPreset(this.value)">
+          <option value="0">Too Tight (lines hidden!)</option>
+          <option value="1">Cozy</option>
+          <option value="2" selected>Comfortable (recommended)</option>
+          <option value="3">Extra Roomy</option>
+        </select>
+      </div>
+      <div id="chart14" class="f3 tree-mount tall"></div>
+      <p class="demo-caption">4-person sample tree with big cards, just for this demo — start on "Too Tight" and watch the lines reappear as you space things out</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code14')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code14">
+      <div class="instructions">
+        <b>How to use:</b> Find <code>f3Chart.setCardXSpacing(...)</code> and <code>f3Chart.setCardYSpacing(...)</code> in your &lt;script&gt; (they're usually right after <code>f3.createChart(...)</code>) and change the numbers.
+        <code>X</code> is the gap between cards sitting side by side (like brothers and sisters); <code>Y</code> is the gap between generations (like you and your parents). Bigger cards need bigger numbers.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (change the numbers in your &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code14-js">f3Chart.setCardXSpacing(220);
+f3Chart.setCardYSpacing(220);</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 15 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">15</div>
+      <h3>🖼️ Background Picker (File or Link)</h3>
+      <span class="tag">JS Basics</span>
+    </div>
+    <div class="example-desc">Your family tree page already has a <code>changeBackground()</code> function with one hardcoded picture. Turn it into a dropdown so you can pick from a few — using a web link OR the name of a picture file sitting next to your page.</div>
+    <div class="example-preview" style="display:block;">
+      <div class="preset-bar">
+        <label for="ex15-preset">Pick a background:</label>
+        <select id="ex15-preset" onchange="changeBackgroundPreview(this.value, this.options[this.selectedIndex].text)">
+          <option value="https://picsum.photos/seed/ocean/1200/800">Ocean (a web link)</option>
+          <option value="https://picsum.photos/seed/forest/1200/800">Forest (a web link)</option>
+          <option value="811214_star_wars_x_wing_spaceship_futuristic_space_sci_fi_xwing.jpg">X-Wing Photo (a file next to this page)</option>
+        </select>
+      </div>
+      <div id="bgPreviewBox" class="bg-preview-box"></div>
+      <p class="demo-caption">If a picture doesn't show up, either the link is broken or that filename isn't sitting next to the page — check the spelling! (The X-Wing option really works here, because that file is really sitting next to this gallery.)</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code15')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code15">
+      <div class="instructions">
+        <b>How to use:</b> Find <code>function changeBackground()</code> in your &lt;script&gt; and replace it with the version below, then add the dropdown to your &lt;body&gt;.
+        In each <code>&lt;option value="..."&gt;</code>, the value can be a web link starting with <code>https://</code>, OR just a plain filename like <code>my-photo.png</code> — that means "a picture sitting in the same folder as this page." Get the spelling and the file ending (.png, .jpg...) exactly right.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (replace changeBackground() in your &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>function changeBackground(source) {
+  document.body.style.backgroundImage = 'url(' + source + ')';
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundRepeat = 'no-repeat';
+}</code></pre>
+      <div class="code-label-row">
+        <span class="code-label">Dropdown (copy into &lt;body&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code>&lt;select onchange="changeBackground(this.value)"&gt;
+  &lt;option value="https://picsum.photos/seed/ocean/1200/800"&gt;Ocean&lt;/option&gt;
+  &lt;option value="https://picsum.photos/seed/forest/1200/800"&gt;Forest&lt;/option&gt;
+  &lt;option value="my-photo.png"&gt;My Own Photo&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 16 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">16</div>
+      <h3>🔭 How Many Generations to Show</h3>
+      <span class="tag">JS Preset</span>
+    </div>
+    <div class="example-desc">Control how far back (ancestors) and how far forward (descendants) your tree shows from the person in the middle.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex16-preset">Try a preset:</label>
+        <select id="ex16-preset" onchange="applyDepthPreset(this.value)">
+          <option value="0">Just My Parents (depth 1)</option>
+          <option value="1" selected>My Grandparents Too (depth 2)</option>
+          <option value="2">Everyone (depth 100)</option>
+        </select>
+      </div>
+      <div id="chart16" class="f3 tree-mount"></div>
+      <p class="demo-caption">3-generation sample tree, just for this demo — Grandpa &amp; Grandma only show on Dad's side</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code16')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code16">
+      <div class="instructions">
+        <b>How to use:</b> Find <code>f3Chart.setAncestryDepth(...)</code> and <code>f3Chart.setProgenyDepth(...)</code> in your &lt;script&gt; and change the numbers.
+        <code>Ancestry</code> = generations UP (parents, grandparents...). <code>Progeny</code> = generations DOWN (children, grandchildren...). A small number keeps a huge tree from feeling overwhelming.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Script code (change the numbers in your &lt;script&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code16-js">f3Chart.setAncestryDepth(2);
+f3Chart.setProgenyDepth(100);</code></pre>
+    </div>
+  </div>
+
+  <!-- ============ EXAMPLE 17 ============ -->
+  <div class="example-card" data-category="familytree">
+    <div class="example-head">
+      <div class="example-num">17</div>
+      <h3>🎯 Highlight Cards on Hover</h3>
+      <span class="tag">CSS + Hover</span>
+    </div>
+    <div class="example-desc">Move your mouse over a card below — it grows or glows. Pure CSS, no JavaScript needed.</div>
+    <div class="example-preview tree-preview">
+      <div class="preset-bar">
+        <label for="ex17-preset">Try a preset:</label>
+        <select id="ex17-preset" onchange="applyHoverPreset(this.value)">
+          <option value="0">Grow &amp; Glow</option>
+          <option value="1">Just Grow</option>
+          <option value="2">Just Glow</option>
+          <option value="3">Little Spin</option>
+        </select>
+      </div>
+      <div id="chart17" class="f3 tree-mount"></div>
+      <p class="demo-caption">Move your mouse over a card above to see it!</p>
+    </div>
+    <div class="example-actions">
+      <button class="btn-small btn-view-code" onclick="toggleCode('code17')">👀 View Code</button>
+    </div>
+    <div class="code-panel" id="code17">
+      <div class="instructions">
+        <b>How to use:</b> Copy this into your &lt;style&gt; section. <code>.card-inner:hover</code> only applies while your mouse is actually over a card — take your mouse away and it goes back to normal.
+      </div>
+      <div class="code-label-row">
+        <span class="code-label">Style code (copy into &lt;style&gt;)</span>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><code id="code17-css"></code></pre>
+    </div>
+  </div>
+
+  <p class="empty-state" id="emptyState" hidden>No examples in this category yet — more coming soon!</p>
+
+</div>
+
+<script>
+  function toggleCode(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  // Category filter pills - shows only the example cards matching the
+  // clicked pill's data-filter, or all of them for "All".
+  const filterButtons = document.querySelectorAll('.categories button');
+  const exampleCards = document.querySelectorAll('.example-card');
+  const emptyState = document.getElementById('emptyState');
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      let visibleCount = 0;
+
+      exampleCards.forEach(card => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.hidden = !show;
+        if (show) visibleCount++;
+      });
+
+      emptyState.hidden = visibleCount > 0;
+    });
+  });
+
+  // Copies the exact text of the <code> block next to the button,
+  // indentation and all. Falls back to the old-school method because
+  // this page is opened straight from a file (no server), and the
+  // modern clipboard API can refuse to work in that situation.
+  function copyCode(button) {
+    const pre = button.parentElement.nextElementSibling;
+    const text = pre.querySelector('code').textContent;
+
+    function markCopied() {
+      const original = button.textContent;
+      button.textContent = '✅ Copied!';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1500);
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(markCopied).catch(() => copyWithTextarea(text, markCopied));
+    } else {
+      copyWithTextarea(text, markCopied);
+    }
+  }
+
+  function copyWithTextarea(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+</script>
+
+<!-- ============ EXAMPLE 1: preset logic ============ -->
+<script>
+  const boxPresets = [
+    { bg: '#ffdf6b', color: '#123f33', emoji: '🎉', text: 'Welcome to my page!' },
+    { bg: '#6bc7ff', color: '#062b45', emoji: '🌊', text: 'Dive into my site!' },
+    { bg: '#ff8fd1', color: '#4a0033', emoji: '🍬', text: 'Sweet things ahead!' },
+    { bg: '#9bd88a', color: '#12401a', emoji: '🌲', text: 'Welcome to the forest!' }
+  ];
+
+  function applyBoxPreset(indexText) {
+    const index = Number(indexText);
+    const p = boxPresets[index];
+    const box = document.getElementById('ex1-box');
+
+    box.style.backgroundColor = p.bg;
+    box.style.color = p.color;
+    box.textContent = p.emoji + ' ' + p.text;
+
+    const codeText =
+      '<div style="background-color:' + p.bg + '; color:' + p.color + '; padding-top:16px; padding-right:26px; padding-bottom:16px; padding-left:26px; border-radius:14px; font-weight:800; font-size:1.15em; text-align:center;">\n' +
+      '  ' + p.emoji + ' ' + p.text + '\n' +
+      '</div>';
+    document.getElementById('code1-html').textContent = codeText;
+  }
+</script>
+
+<!-- ============ EXAMPLE 2: preset logic ============ -->
+<script>
+  const glowPresets = [
+    { name: 'Pink Glow', bg: '#ff5da2', hover: '#ff2f85' },
+    { name: 'Blue Glow', bg: '#4fb0ff', hover: '#1d8fe0' },
+    { name: 'Green Glow', bg: '#4caf50', hover: '#2e7d32' },
+    { name: 'Orange Glow', bg: '#ff9142', hover: '#ff6a00' }
+  ];
+
+  function applyGlowPreset(indexText) {
+    const index = Number(indexText);
+    const p = glowPresets[index];
+    const btn = document.getElementById('ex2-btn');
+
+    btn.style.setProperty('--glow-bg', p.bg);
+    btn.style.setProperty('--glow-bg-hover', p.hover);
+
+    const codeText =
+      '.glow-btn {\n' +
+      '  background-color: ' + p.bg + ';\n' +
+      '  color: white;\n' +
+      '  border-style: none;\n' +
+      '  padding-top: 14px;\n' +
+      '  padding-right: 28px;\n' +
+      '  padding-bottom: 14px;\n' +
+      '  padding-left: 28px;\n' +
+      '  font-size: 1.1em;\n' +
+      '  font-weight: 800;\n' +
+      '  border-radius: 999px;\n' +
+      '  cursor: pointer;\n' +
+      '  transition-duration: 0.25s;\n' +
+      '}\n' +
+      '.glow-btn:hover {\n' +
+      '  background-color: ' + p.hover + ';\n' +
+      '  box-shadow: 0 0 25px ' + p.bg + ';\n' +
+      '  transform: scale(1.08);\n' +
+      '}';
+    document.getElementById('code2-css').textContent = codeText;
+  }
+</script>
+
+<!-- ============ EXAMPLE 3: preset logic + live preview ============ -->
+<script>
+  const alertPresets = [
+    { name: 'Friendly Purple', icon: 'info', color: '#7c5cff', text: 'Hello there!' },
+    { name: 'Success Green', icon: 'success', color: '#2e7d32', text: 'Great job!' },
+    { name: 'Warning Orange', icon: 'warning', color: '#ff9142', text: 'Careful now!' },
+    { name: 'Error Red', icon: 'error', color: '#d32f2f', text: 'Oops, try again!' }
+  ];
+  let currentAlertPreset = alertPresets[0];
+
+  function applyAlertPreset(indexText) {
+    const index = Number(indexText);
+    currentAlertPreset = alertPresets[index];
+
+    const codeText =
+      "function beautifulAlert() {\n" +
+      "  Swal.fire({\n" +
+      "    icon: '" + currentAlertPreset.icon + "',\n" +
+      "    text: '" + currentAlertPreset.text + "',\n" +
+      "    confirmButtonColor: '" + currentAlertPreset.color + "'\n" +
+      "  });\n" +
+      "}";
+    document.getElementById('code3-js').textContent = codeText;
+  }
+
+  // Live, working version - backs the example 3 preview button above.
+  function beautifulAlert() {
+    Swal.fire({
+      icon: currentAlertPreset.icon,
+      text: currentAlertPreset.text,
+      confirmButtonColor: currentAlertPreset.color
+    });
+  }
+</script>
+
+<!-- ============ EXAMPLE 4: live tree + card color presets ============ -->
+<script>
+  const TREE_SAMPLE = [
+    { id: '1', data: { 'first name': 'Me', 'last name': '', birthday: '1998', gender: 'M' }, rels: { parents: ['2', '3'] } },
+    { id: '2', data: { 'first name': 'Dad', 'last name': '', birthday: '1961', gender: 'M' }, rels: { children: ['1'], spouses: ['3'] } },
+    { id: '3', data: { 'first name': 'Mom', 'last name': '', birthday: '1964', gender: 'F' }, rels: { children: ['1'], spouses: ['2'] } }
+  ];
+
+  function ensureStyleTag(id) {
+    let tag = document.getElementById(id);
+    if (!tag) {
+      tag = document.createElement('style');
+      tag.id = id;
+      document.head.appendChild(tag);
+    }
+    return tag;
+  }
+
+  try {
+    const f3Chart4 = f3.createChart('#chart4', JSON.parse(JSON.stringify(TREE_SAMPLE)));
+    f3Chart4.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart4.setCardHtml().setCardDisplay([['first name']]);
+    f3Chart4.updateTree({ initial: true, tree_position: 'fit' });
+
+    const cardColorPresets = [
+      { name: 'Ocean Blue', male: '#1d3f8f', female: '#0f9b8e' },
+      { name: 'Sunset', male: '#d64518', female: '#ff2f85' },
+      { name: 'Forest', male: '#2e7d32', female: '#6a994e' },
+      { name: 'Galaxy', male: '#4b2e83', female: '#a13cad' }
+    ];
+
+    window.applyCardColorPreset = function (indexText) {
+      const index = Number(indexText);
+      const p = cardColorPresets[index];
+
+      const liveCss =
+        '#chart4.f3 div.card-male .card-inner, #chart4.f3 div.card-male .person-icon svg {\n' +
+        '  background-color: ' + p.male + ';\n' +
+        '  color: white;\n' +
+        '}\n' +
+        '#chart4.f3 div.card-female .card-inner, #chart4.f3 div.card-female .person-icon svg {\n' +
+        '  background-color: ' + p.female + ';\n' +
+        '  color: white;\n' +
+        '}';
+      ensureStyleTag('style-tree4').textContent = liveCss;
+
+      const codeCss =
+        '.f3 div.card-male .card-inner, .f3 div.card-male .person-icon svg {\n' +
+        '  background-color: ' + p.male + ';\n' +
+        '  color: white;\n' +
+        '}\n' +
+        '.f3 div.card-female .card-inner, .f3 div.card-female .person-icon svg {\n' +
+        '  background-color: ' + p.female + ';\n' +
+        '  color: white;\n' +
+        '}';
+      document.getElementById('code4-css').textContent = codeCss;
+    };
+
+    applyCardColorPreset(0);
+  } catch (err) {
+    console.error('Example 4 tree failed to load:', err);
+    document.getElementById('chart4').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 5: live tree + card style presets ============ -->
+<script>
+  try {
+    const TREE_SAMPLE_5 = [
+      { id: '1', data: { 'first name': 'Me', 'last name': '', gender: 'M', avatar: 'https://ui-avatars.com/api/?name=Me&background=2e7d32&color=fff&size=128' }, rels: { parents: ['2', '3'] } },
+      { id: '2', data: { 'first name': 'Dad', 'last name': '', gender: 'M', avatar: 'https://ui-avatars.com/api/?name=Dad&background=1d3f8f&color=fff&size=128' }, rels: { children: ['1'], spouses: ['3'] } },
+      { id: '3', data: { 'first name': 'Mom', 'last name': '', gender: 'F', avatar: 'https://ui-avatars.com/api/?name=Mom&background=c52a9c&color=fff&size=128' }, rels: { children: ['1'], spouses: ['2'] } }
+    ];
+
+    const f3Chart5 = f3.createChart('#chart5', TREE_SAMPLE_5);
+    f3Chart5.setCardXSpacing(150).setCardYSpacing(150);
+    const card5 = f3Chart5.setCardHtml();
+    card5.setStyle('imageCircle');
+    card5.setCardDisplay([['first name']]);
+    f3Chart5.updateTree({ initial: true, tree_position: 'fit' });
+
+    window.applyCardStylePreset = function (styleName) {
+      card5.setStyle(styleName);
+      f3Chart5.updateTree({ initial: true, tree_position: 'fit' });
+      document.getElementById('code5-js').textContent = "card.setStyle('" + styleName + "');";
+    };
+  } catch (err) {
+    console.error('Example 5 tree failed to load:', err);
+    document.getElementById('chart5').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 6: live tree + outline presets ============ -->
+<script>
+  try {
+    const f3Chart6 = f3.createChart('#chart6', JSON.parse(JSON.stringify(TREE_SAMPLE)));
+    f3Chart6.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart6.setCardHtml().setCardDisplay([['first name']]);
+    f3Chart6.updateTree({ initial: true, tree_position: 'fit' });
+
+    const outlinePresets = [
+      { name: 'Yellow Spotlight', width: '4px', style: 'solid', color: 'yellow' },
+      { name: 'Blue Dots', width: '5px', style: 'dotted', color: '#1d3f8f' },
+      { name: 'Green Double Line', width: '6px', style: 'double', color: '#2e7d32' },
+      { name: 'Red Dashes', width: '4px', style: 'dashed', color: '#d32f2f' }
+    ];
+
+    window.applyOutlinePreset = function (indexText) {
+      const index = Number(indexText);
+      const p = outlinePresets[index];
+
+      const liveCss =
+        '#chart6.f3 div.card-main .card-inner {\n' +
+        '  outline-width: ' + p.width + ';\n' +
+        '  outline-style: ' + p.style + ';\n' +
+        '  outline-color: ' + p.color + ';\n' +
+        '}';
+      ensureStyleTag('style-tree6').textContent = liveCss;
+
+      const codeCss =
+        '.f3 div.card-main .card-inner {\n' +
+        '  outline-width: ' + p.width + ';\n' +
+        '  outline-style: ' + p.style + ';\n' +
+        '  outline-color: ' + p.color + ';\n' +
+        '}';
+      document.getElementById('code6-css').textContent = codeCss;
+    };
+
+    applyOutlinePreset(0);
+  } catch (err) {
+    console.error('Example 6 tree failed to load:', err);
+    document.getElementById('chart6').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 7: live tree + lines/frame presets ============ -->
+<script>
+  try {
+    const f3Chart7 = f3.createChart('#chart7', JSON.parse(JSON.stringify(TREE_SAMPLE)));
+    f3Chart7.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart7.setCardHtml().setCardDisplay([['first name']]);
+    f3Chart7.updateTree({ initial: true, tree_position: 'fit' });
+
+    const linesFramePresets = [
+      { name: 'Grape', stroke: '#6a0dad', strokeWidth: '5px', canvasBg: 'rgba(230, 220, 255, 0.6)', borderWidth: '2px', borderStyle: 'dotted', borderColor: '#6a0dad' },
+      { name: 'Ocean', stroke: '#0f7fa3', strokeWidth: '4px', canvasBg: 'rgba(210, 240, 250, 0.6)', borderWidth: '2px', borderStyle: 'solid', borderColor: '#0f7fa3' },
+      { name: 'Sunset', stroke: '#d64518', strokeWidth: '5px', canvasBg: 'rgba(255, 230, 210, 0.6)', borderWidth: '3px', borderStyle: 'dashed', borderColor: '#d64518' },
+      { name: 'Forest', stroke: '#2e7d32', strokeWidth: '4px', canvasBg: 'rgba(220, 240, 210, 0.6)', borderWidth: '2px', borderStyle: 'double', borderColor: '#2e7d32' }
+    ];
+
+    window.applyLinesFramePreset = function (indexText) {
+      const index = Number(indexText);
+      const p = linesFramePresets[index];
+
+      const liveCss =
+        '#chart7.f3 .links_view path.link {\n' +
+        '  stroke: ' + p.stroke + ';\n' +
+        '  stroke-width: ' + p.strokeWidth + ';\n' +
+        '}\n' +
+        '#chart7 #f3Canvas {\n' +
+        '  background-color: ' + p.canvasBg + ';\n' +
+        '  border-radius: 12px;\n' +
+        '  border-width: ' + p.borderWidth + ';\n' +
+        '  border-style: ' + p.borderStyle + ';\n' +
+        '  border-color: ' + p.borderColor + ';\n' +
+        '}';
+      ensureStyleTag('style-tree7').textContent = liveCss;
+
+      const codeCss =
+        '.f3 .links_view path.link {\n' +
+        '  stroke: ' + p.stroke + ';\n' +
+        '  stroke-width: ' + p.strokeWidth + ';\n' +
+        '}\n' +
+        '#f3Canvas {\n' +
+        '  background-color: ' + p.canvasBg + ';\n' +
+        '  border-radius: 12px;\n' +
+        '  border-width: ' + p.borderWidth + ';\n' +
+        '  border-style: ' + p.borderStyle + ';\n' +
+        '  border-color: ' + p.borderColor + ';\n' +
+        '}';
+      document.getElementById('code7-css').textContent = codeCss;
+    };
+
+    applyLinesFramePreset(0);
+  } catch (err) {
+    console.error('Example 7 tree failed to load:', err);
+    document.getElementById('chart7').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 8: live tree + light/dark toggle ============ -->
+<script>
+  try {
+    const f3Chart8 = f3.createChart('#chart8', JSON.parse(JSON.stringify(TREE_SAMPLE)));
+    f3Chart8.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart8.setCardHtml().setCardDisplay([['first name']]);
+    f3Chart8.updateTree({ initial: true, tree_position: 'fit' });
+
+    ensureStyleTag('style-tree8').textContent =
+      '#chart8.f3.dark-mode {\n' +
+      '  --background-color: #1e1e1e;\n' +
+      '  --text-color: #f5f5f5;\n' +
+      '}';
+
+    window.setTreeTheme = function (mode) {
+      const wrap = document.getElementById('ex8-wrap');
+      const chart = document.getElementById('chart8');
+      const lightBtn = document.getElementById('ex8-light-btn');
+      const darkBtn = document.getElementById('ex8-dark-btn');
+
+      if (mode === 'dark') {
+        chart.classList.add('dark-mode');
+        wrap.style.backgroundColor = '#1e1e1e';
+        wrap.style.color = 'white';
+        darkBtn.classList.add('active');
+        lightBtn.classList.remove('active');
+      } else {
+        chart.classList.remove('dark-mode');
+        wrap.style.backgroundColor = '';
+        wrap.style.color = '';
+        lightBtn.classList.add('active');
+        darkBtn.classList.remove('active');
+      }
+    };
+  } catch (err) {
+    console.error('Example 8 tree failed to load:', err);
+    document.getElementById('chart8').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 9: live tree + edit form + save toast ============ -->
+<script>
+  try {
+    const TREE_SAMPLE_9 = [
+      { id: '1', data: { 'first name': 'Me', 'last name': '', gender: 'M' }, rels: { parents: ['2', '3'] } },
+      { id: '2', data: { 'first name': 'Dad', 'last name': '', gender: 'M' }, rels: { children: ['1'], spouses: ['3'] } },
+      { id: '3', data: { 'first name': 'Mom', 'last name': '', gender: 'F' }, rels: { children: ['1'], spouses: ['2'] } }
+    ];
+
+    const f3Chart9 = f3.createChart('#chart9', TREE_SAMPLE_9);
+    f3Chart9.setCardXSpacing(140).setCardYSpacing(150);
+    const card9 = f3Chart9.setCardHtml();
+    card9.setCardDisplay([['first name', 'last name']]);
+
+    const editTree9 = f3Chart9.editTree();
+    editTree9.fixed();
+    editTree9.setFields([
+      { id: 'first name', type: 'text', label: 'First name' },
+      { id: 'last name', type: 'text', label: 'Last name' }
+    ]);
+    editTree9.setEditFirst(false);
+    editTree9.setEdit();
+    editTree9.setCardClickOpen(card9);
+
+    f3Chart9.updateTree({ initial: true, tree_position: 'fit' });
+
+    function showSavedToast() {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Saved!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+
+    editTree9.setOnChange(showSavedToast);
+  } catch (err) {
+    console.error('Example 9 tree failed to load:', err);
+    document.getElementById('chart9').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 10: live tree + photo click dialog ============ -->
+<script>
+  try {
+    const TREE_SAMPLE_10 = [
+      { id: '1', data: { 'first name': 'Me', 'last name': '', gender: 'M', avatar: 'https://ui-avatars.com/api/?name=Me&background=2e7d32&color=fff&size=128' }, rels: { parents: ['2', '3'] } },
+      { id: '2', data: { 'first name': 'Dad', 'last name': '', gender: 'M', avatar: 'https://ui-avatars.com/api/?name=Dad&background=1d3f8f&color=fff&size=128' }, rels: { children: ['1'], spouses: ['3'] } },
+      { id: '3', data: { 'first name': 'Mom', 'last name': '', gender: 'F', avatar: 'https://ui-avatars.com/api/?name=Mom&background=c52a9c&color=fff&size=128' }, rels: { children: ['1'], spouses: ['2'] } }
+    ];
+
+    const f3Chart10 = f3.createChart('#chart10', TREE_SAMPLE_10);
+    f3Chart10.setCardXSpacing(150).setCardYSpacing(150);
+    const card10 = f3Chart10.setCardHtml();
+    card10.setStyle('imageCircle');
+    card10.setCardDisplay([['first name']]);
+    f3Chart10.updateTree({ initial: true, tree_position: 'fit' });
+
+    function showImagePopup10(imageUrl) {
+      const dialog = document.createElement('dialog');
+
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.style.maxWidth = '260px';
+      img.style.display = 'block';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.textContent = 'Close';
+      closeBtn.style.marginTop = '10px';
+      closeBtn.onclick = function () {
+        dialog.close();
+      };
+
+      dialog.appendChild(img);
+      dialog.appendChild(closeBtn);
+      document.body.appendChild(dialog);
+
+      dialog.showModal();
+
+      dialog.addEventListener('close', function () {
+        dialog.remove();
+      });
+    }
+
+    function connectPhotosToPopup10() {
+      const photos = document.querySelectorAll('#chart10 .card img');
+      photos.forEach(function (photo) {
+        photo.style.cursor = 'pointer';
+        photo.addEventListener('click', function (event) {
+          event.stopPropagation();
+          showImagePopup10(photo.src);
+        });
+      });
+    }
+
+    connectPhotosToPopup10();
+    f3Chart10.setAfterUpdate(connectPhotosToPopup10);
+  } catch (err) {
+    console.error('Example 10 tree failed to load:', err);
+    document.getElementById('chart10').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 11: confirm popup ============ -->
+<script>
+  function tryDelete() {
+    const isSure = confirm('Delete this person? This cannot be undone.');
+    const resultBox = document.getElementById('confirmResult');
+
+    if (isSure) {
+      resultBox.textContent = '✅ You clicked OK - this is where deleting would happen.';
+    } else {
+      resultBox.textContent = '↩️ You clicked Cancel - nothing happened.';
+    }
+  }
+</script>
+
+<!-- ============ EXAMPLE 12: countdown ============ -->
+<script>
+  let count = 3;
+  const countdownText = document.getElementById('countdownText');
+
+  function startCountdown() {
+    countdownText.textContent = count;
+
+    const timer = setInterval(function () {
+      count = count - 1;
+
+      if (count > 0) {
+        countdownText.textContent = count;
+      } else {
+        countdownText.textContent = "Let's go!";
+        clearInterval(timer);
+        count = 3;
+      }
+    }, 1000);
+  }
+</script>
+
+<!-- ============ EXAMPLE 13: curtain reveal ============ -->
+<script>
+  function slideAway(element, direction) {
+    const endX = direction === 'left' ? '-100%' : '100%';
+
+    const animation = element.animate(
+      [
+        { transform: 'translateX(0)', opacity: 1 },
+        { transform: 'translateX(' + endX + ')', opacity: 0 }
+      ],
+      { duration: 700, easing: 'ease-out', fill: 'forwards' }
+    );
+
+    animation.onfinish = function () {
+      element.remove();
+    };
+  }
+
+  function playCurtain() {
+    const left = document.getElementById('curtainLeft');
+    const right = document.getElementById('curtainRight');
+    if (left) slideAway(left, 'left');
+    if (right) slideAway(right, 'right');
+  }
+
+  function resetCurtain() {
+    const wrap = document.getElementById('curtainWrap');
+    wrap.querySelectorAll('.curtain-screen').forEach(el => el.remove());
+
+    const left = document.createElement('div');
+    left.className = 'curtain-screen left';
+    left.id = 'curtainLeft';
+    left.textContent = 'Click me';
+
+    const right = document.createElement('div');
+    right.className = 'curtain-screen right';
+    right.id = 'curtainRight';
+    right.textContent = 'Click me';
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+
+    left.addEventListener('click', playCurtain);
+    right.addEventListener('click', playCurtain);
+  }
+
+  document.getElementById('curtainLeft').addEventListener('click', playCurtain);
+  document.getElementById('curtainRight').addEventListener('click', playCurtain);
+</script>
+
+<!-- ============ EXAMPLE 14: live tree + card spacing presets ============ -->
+<script>
+  try {
+    const TREE_SAMPLE_14 = [
+      { id: '1', data: { 'first name': 'Me', 'last name': 'Tan', gender: 'M', birthday: '2014', 'favourite food': 'Chicken Rice', hobby: 'Drawing' }, rels: { parents: ['2', '3'] } },
+      { id: '2', data: { 'first name': 'Dad', 'last name': 'Tan', gender: 'M', birthday: '1985', 'favourite food': 'Laksa', hobby: 'Fishing' }, rels: { children: ['1', '4'], spouses: ['3'] } },
+      { id: '3', data: { 'first name': 'Mom', 'last name': 'Tan', gender: 'F', birthday: '1987', 'favourite food': 'Noodles', hobby: 'Gardening' }, rels: { children: ['1', '4'], spouses: ['2'] } },
+      { id: '4', data: { 'first name': 'Sis', 'last name': 'Tan', gender: 'F', birthday: '2016', 'favourite food': 'Ice Cream', hobby: 'Dancing' }, rels: { parents: ['2', '3'] } }
+    ];
+
+    const f3Chart14 = f3.createChart('#chart14', TREE_SAMPLE_14);
+    const card14 = f3Chart14.setCardHtml();
+    card14.setCardDisplay([
+      ['first name', 'last name'],
+      ['birthday'],
+      ['favourite food'],
+      ['hobby']
+    ]);
+
+    const spacingPresets = [
+      { name: 'Too Tight', x: 90, y: 90 },
+      { name: 'Cozy', x: 160, y: 170 },
+      { name: 'Comfortable', x: 220, y: 220 },
+      { name: 'Extra Roomy', x: 280, y: 260 }
+    ];
+
+    window.applySpacingPreset = function (indexText) {
+      const index = Number(indexText);
+      const p = spacingPresets[index];
+
+      f3Chart14.setCardXSpacing(p.x);
+      f3Chart14.setCardYSpacing(p.y);
+      f3Chart14.updateTree({ initial: true, tree_position: 'fit' });
+
+      document.getElementById('code14-js').textContent =
+        'f3Chart.setCardXSpacing(' + p.x + ');\n' +
+        'f3Chart.setCardYSpacing(' + p.y + ');';
+    };
+
+    applySpacingPreset(2);
+  } catch (err) {
+    console.error('Example 14 tree failed to load:', err);
+    document.getElementById('chart14').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 15: background picker ============ -->
+<script>
+  function changeBackgroundPreview(source, label) {
+    const box = document.getElementById('bgPreviewBox');
+    box.style.backgroundImage = 'url(' + source + ')';
+    box.textContent = label;
+  }
+
+  changeBackgroundPreview('https://picsum.photos/seed/ocean/1200/800', 'Ocean (a web link)');
+</script>
+
+<!-- ============ EXAMPLE 16: live tree + generation depth presets ============ -->
+<script>
+  try {
+    const TREE_SAMPLE_16 = [
+      { id: '1', data: { 'first name': 'Me', 'last name': '', gender: 'M' }, rels: { parents: ['2', '3'] } },
+      { id: '2', data: { 'first name': 'Dad', 'last name': '', gender: 'M' }, rels: { children: ['1'], spouses: ['3'], parents: ['5', '6'] } },
+      { id: '3', data: { 'first name': 'Mom', 'last name': '', gender: 'F' }, rels: { children: ['1'], spouses: ['2'] } },
+      { id: '5', data: { 'first name': 'Grandpa', 'last name': '', gender: 'M' }, rels: { children: ['2'], spouses: ['6'] } },
+      { id: '6', data: { 'first name': 'Grandma', 'last name': '', gender: 'F' }, rels: { children: ['2'], spouses: ['5'] } }
+    ];
+
+    const f3Chart16 = f3.createChart('#chart16', TREE_SAMPLE_16);
+    f3Chart16.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart16.setCardHtml().setCardDisplay([['first name']]);
+
+    const depthPresets = [
+      { name: 'Just My Parents', ancestry: 1, progeny: 100 },
+      { name: 'My Grandparents Too', ancestry: 2, progeny: 100 },
+      { name: 'Everyone', ancestry: 100, progeny: 100 }
+    ];
+
+    window.applyDepthPreset = function (indexText) {
+      const index = Number(indexText);
+      const p = depthPresets[index];
+
+      f3Chart16.setAncestryDepth(p.ancestry);
+      f3Chart16.setProgenyDepth(p.progeny);
+      f3Chart16.updateTree({ initial: true, tree_position: 'fit' });
+
+      document.getElementById('code16-js').textContent =
+        'f3Chart.setAncestryDepth(' + p.ancestry + ');\n' +
+        'f3Chart.setProgenyDepth(' + p.progeny + ');';
+    };
+
+    applyDepthPreset(1);
+  } catch (err) {
+    console.error('Example 16 tree failed to load:', err);
+    document.getElementById('chart16').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+<!-- ============ EXAMPLE 17: live tree + hover presets ============ -->
+<script>
+  try {
+    const f3Chart17 = f3.createChart('#chart17', JSON.parse(JSON.stringify(TREE_SAMPLE)));
+    f3Chart17.setCardXSpacing(140).setCardYSpacing(140);
+    f3Chart17.setCardHtml().setCardDisplay([['first name']]);
+    f3Chart17.updateTree({ initial: true, tree_position: 'fit' });
+
+    const hoverPresets = [
+      { name: 'Grow & Glow', transform: 'scale(1.08)', shadow: '0 0 15px rgba(0,0,0,0.35)' },
+      { name: 'Just Grow', transform: 'scale(1.1)', shadow: 'none' },
+      { name: 'Just Glow', transform: 'none', shadow: '0 0 18px rgba(242,169,34,0.8)' },
+      { name: 'Little Spin', transform: 'rotate(4deg) scale(1.05)', shadow: '0 0 10px rgba(0,0,0,0.3)' }
+    ];
+
+    window.applyHoverPreset = function (indexText) {
+      const index = Number(indexText);
+      const p = hoverPresets[index];
+
+      const liveCss =
+        '#chart17.f3 .card-inner {\n' +
+        '  transition-duration: 0.2s;\n' +
+        '}\n' +
+        '#chart17.f3 .card-inner:hover {\n' +
+        '  transform: ' + p.transform + ';\n' +
+        '  box-shadow: ' + p.shadow + ';\n' +
+        '}';
+      ensureStyleTag('style-tree17').textContent = liveCss;
+
+      const codeCss =
+        '.f3 .card-inner {\n' +
+        '  transition-duration: 0.2s;\n' +
+        '}\n' +
+        '.f3 .card-inner:hover {\n' +
+        '  transform: ' + p.transform + ';\n' +
+        '  box-shadow: ' + p.shadow + ';\n' +
+        '}';
+      document.getElementById('code17-css').textContent = codeCss;
+    };
+
+    applyHoverPreset(0);
+  } catch (err) {
+    console.error('Example 17 tree failed to load:', err);
+    document.getElementById('chart17').textContent = 'Family tree could not load (check your internet connection).';
+  }
+</script>
+
+</body>
+</html>

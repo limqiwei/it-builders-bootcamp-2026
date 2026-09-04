@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+	<!-- This sets the title of your browser tab. Change it to see what happens -->
+	<title>My Family Tree</title>
+
+	<!-- Loading External Style Sheets -->
+	<link rel="stylesheet" href="https://unpkg.com/family-chart@latest/dist/styles/family-chart.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+	
+	<!-- Loading External Javascripts -->
+	<script src="https://unpkg.com/d3@7"></script>
+	<script src="https://unpkg.com/family-chart@latest/dist/family-chart.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/jtzs/it-builders-bootcamp-2026/Day2/2_final_project_family_tree/tools/export_helper.js"></script>
+
+  <!-- This is where we put our CSS styles -->
+  <style>
+  #toolbar { 
+	min-height: 44px; 
+	background: #1a6b56;
+	margin: -8px;
+	color: white; 
+
+	font-weight: bold;
+  }
+  
+  #toolbar .eh-status {
+	color: white;
+	font-size: 25px;
+	
+  }
+  
+  #toolbar button, .eh-toolbar button, .eh-toolbar label {
+	font-size: 25px !important;
+  }
+  
+  body {
+	background: #c9d8b7;
+	font-family: 'Gabarito', 'Roboto', 'Arial'
+  }
+  
+  #FamilyChart {
+	width: 90%;
+	height: 800px;
+	margin: auto;
+	border: 1px solid black;
+	border-radius: 12px;
+  }
+  
+  #title {
+	text-align: center; 
+	padding: 20px; 
+	text-transform: uppercase;
+	color: black;
+  }
+  
+  
+  /* You can add on CSS here */
+  </style>
+</head>
+<body>
+  <div id="toolbar"></div>
+
+  <h1 id="title">My Family Tree</h1>
+  <div style="position:relative">
+  <div id="FamilyChart" class="f3"></div> 
+
+  <div>
+    <dialog id="my-dialog" popover>
+      <img id="dialog-preview-img" src="" alt="Expanded preview" style="max-width: 100%; height: auto; display: block; margin-bottom: 1rem;" />
+      <button popovertarget="my-dialog" popovertargetaction="hide">Close</button>
+    </dialog>
+  </div>
+
+
+
+  <script>  
+  // The toolbar goes up first, on its own, so that a failure further down cannot
+  // take it with it - and so a missing export_helper.js is loud, not silent.
+  const helper = typeof ExportHelper === 'undefined' ? null : ExportHelper
+
+  if (helper) {
+    helper.init({
+      storageKey: 'family-tree-demo',
+      exportPrefix: 'family-tree',
+      mount: '#toolbar'
+    })
+  } else {
+    document.getElementById('toolbar').textContent =
+      'export_helper.js did not load - check it sits next to index.html.'
+    console.error('export_helper.js did not load')
+  }
+
+  </script>
+  <script>
+    // This is a sample data to help you.
+    const SAMPLE = [
+      {
+        "id": "1",
+        "data": {"first name": "Me", "last name": "", "birthday": "1998", "gender": "M"},
+        "rels": {"parents": ["2", "3"]}
+      },
+      {
+        "id": "2",
+        "data": {"first name": "Dad", "last name": "", "birthday": "1961", "gender": "M"},
+        "rels": {"children": ["1"], "spouses": ["3"]}
+      },
+      {
+        "id": "3",
+        "data": {"first name": "Mom", "last name": "", "birthday": "1964", "gender": "F"},
+        "rels": {"children": ["1"], "spouses": ["2"]}
+      }
+    ]
+
+    const f3Chart = f3.createChart('#FamilyChart', SAMPLE)
+
+    // Siblings are not stored - the library works them out from shared parents -
+    // and it only draws them for the currently focused card, off by default.
+    f3Chart
+    .setShowSiblingsOfMain(true)
+    .setAncestryDepth(100)
+    .setProgenyDepth(100)
+    .setCardXSpacing(150)
+    .setCardYSpacing(200)
+
+    const card = f3Chart.setCardHtml()
+      .setStyle('imageCircleRect')
+      .setCardDisplay([
+        ["first name","last name"],
+        ["birthday"],
+        ["favourite food",],
+        ["hobby",],
+
+      ]);
+
+    // createChart on its own is a viewer. This is what makes it editable: click a
+    // card and a form opens, with its own add-relative and delete buttons.
+    // Add a line to the list and every person grows that field.
+    const editTree = f3Chart.editTree()
+      .fixed()
+      .setFields([
+        { id: 'first name', type: 'text',     label: 'First name' },
+        { id: 'last name',  type: 'text',     label: 'Last name' },
+        { id: 'birthday',   type: 'text',     label: 'Birthday' },
+        { id: 'about',      type: 'textarea', label: 'About them' },
+        { id: 'avatar',      type: 'text', label: 'Avatar' },
+        { id: 'favourite food',   type: 'text',     label: 'Favourite Food' },
+        { id: 'hobby',   type: 'text',     label: 'Hobby' },
+      ])
+      .setEditFirst(true);
+
+    editTree.setEdit()
+    editTree.setCardClickOpen(card)
+
+    // Everything about saving, exporting and importing lives in export_helper.js.
+    // It reads this chart and writes back to it; it never builds one. Handing it
+    // the edit form is what turns on save-on-every-edit.
+    const saved = helper ? helper.setChart(f3Chart, editTree).load() : null
+
+    if (saved) {
+      helper.apply(saved.data, saved.mainId)   // redraws for us
+      helper.setStatus('Loaded the tree saved in this browser.')
+      f3Chart.updateTree({tree_position: 'fit'})
+    } else {
+      f3Chart.updateTree({initial: true, tree_position: 'fit'})
+    }
+
+  </script>
+</body>
+</html>

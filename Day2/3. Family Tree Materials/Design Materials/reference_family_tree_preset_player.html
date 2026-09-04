@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Family Tree Style Picker</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Baloo+2:wght@500;800&family=Poppins:wght@400;700&family=Playfair+Display:wght@600;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/d3@7"></script>
+<script src="https://unpkg.com/family-chart@latest/dist/family-chart.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/family-chart@latest/dist/styles/family-chart.css">
+
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Gabarito', Roboto, Arial, sans-serif; background: #ece4c8; color: #222; }
+
+  header { background: #1a6b56; color: white; padding: 26px 20px 36px; text-align: center; }
+  header h1 { margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  header p { margin: 0; opacity: 0.92; font-size: 1.02em; }
+
+  .intro {
+    max-width: 820px; margin: 22px auto; background: white; border: 2px solid #ee6b4d;
+    border-radius: 14px; padding: 14px 22px; line-height: 1.6; font-size: 0.93em;
+  }
+  .intro code { background: #f4efdc; padding: 2px 6px; border-radius: 4px; }
+
+  .controls {
+    max-width: 980px; margin: 0 auto 8px; padding: 0 20px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;
+  }
+  .control { background: white; border: 2px solid #1a6b56; border-radius: 12px; padding: 8px 12px; }
+  .control label { display: block; font-size: 0.72em; font-weight: 800; text-transform: uppercase; color: #123f33; margin-bottom: 3px; letter-spacing: 0.4px; }
+  .control select { width: 100%; font: inherit; font-size: 0.95em; font-weight: 700; border: none; background: transparent; color: #123f33; cursor: pointer; }
+
+  .current-info {
+    max-width: 980px; margin: 14px auto 16px; text-align: center; font-size: 0.85em; color: #555; padding: 0 20px;
+  }
+  .current-info .chip {
+    display: inline-block; background: #1d3f8f; color: white; font-size: 0.85em; font-weight: 700;
+    padding: 3px 11px; border-radius: 999px; margin: 2px 4px;
+  }
+
+  .stage { max-width: 1000px; margin: 0 auto 50px; padding: 0 20px; }
+  #chartWrap {
+    width: 100%; height: 580px; border-radius: 18px; overflow: hidden;
+  }
+  #FamilyChart { width: 100%; height: 100%; }
+
+  /* =========================================================
+     BACKGROUND choices - independent of card color scheme.
+     ========================================================= */
+  #chartWrap.bg-cream   { background: #f5efd9; }
+  #chartWrap.bg-navy    { background: linear-gradient(180deg, #0b2545 0%, #13315c 100%); }
+  #chartWrap.bg-starry  { background: radial-gradient(circle at 20% 20%, #2a1a4d 0%, #0c0821 60%, #05030f 100%); }
+  #chartWrap.bg-pastel  { background: linear-gradient(135deg, #ffe3f3 0%, #e3e9ff 100%); }
+  #chartWrap.bg-forest  { background: linear-gradient(180deg, #e7f0df 0%, #cfe0c0 100%); }
+  #chartWrap.bg-paper   { background: #e8dcc3 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="1" fill="%23c9b892"/></svg>'); }
+  #chartWrap.bg-sunset  { background: linear-gradient(180deg, #ffb87a 0%, #ff7a7a 60%, #7a4a8f 100%); }
+  #chartWrap.bg-mint    { background: linear-gradient(160deg, #e2fbf1 0%, #cdeee0 100%); }
+
+  #chartWrap.bg-cream  #f3Canvas { background: rgba(245,245,220,0.7); border: 1px dotted grey; }
+  #chartWrap.bg-navy   #f3Canvas { background: rgba(9, 34, 66, 0.55); border: 1px solid #2a5c8a; }
+  #chartWrap.bg-starry #f3Canvas { background: rgba(15, 8, 35, 0.5); border: 1px solid #4b2f8f; }
+  #chartWrap.bg-pastel #f3Canvas { background: rgba(255, 255, 255, 0.55); border: 3px dashed #ff8fd0; }
+  #chartWrap.bg-forest #f3Canvas { background: rgba(255, 255, 255, 0.4); border: 1px solid #8fa87a; }
+  #chartWrap.bg-paper  #f3Canvas { background: rgba(255, 250, 235, 0.55); border: 2px solid #a9855a; }
+  #chartWrap.bg-sunset #f3Canvas { background: rgba(255, 255, 255, 0.35); border: 1px solid #d97a55; }
+  #chartWrap.bg-mint   #f3Canvas { background: rgba(255, 255, 255, 0.5); border: 1px solid #7fcbaa; }
+
+  /* =========================================================
+     LOOK choices - card colors, link color, font. Independent
+     of background, so any Look can sit on any Background.
+     ========================================================= */
+  #chartWrap.look-classic { font-family: 'Gabarito', sans-serif; }
+  #chartWrap.look-classic div.card-male .card-inner, #chartWrap.look-classic .card-male .person-icon svg { background-color: #48b57f; color: white; }
+  #chartWrap.look-classic div.card-female .card-inner, #chartWrap.look-classic .card-female .person-icon svg { background-color: #c52a9c; color: white; }
+  #chartWrap.look-classic .links_view path.link { stroke: #7c3f9c; stroke-width: 4px; }
+
+  #chartWrap.look-ocean { font-family: 'Poppins', sans-serif; }
+  #chartWrap.look-ocean div.card-male .card-inner, #chartWrap.look-ocean .card-male .person-icon svg { background-color: #0f6b7c; color: white; }
+  #chartWrap.look-ocean div.card-female .card-inner, #chartWrap.look-ocean .card-female .person-icon svg { background-color: #3bb0c9; color: #06222a; }
+  #chartWrap.look-ocean .links_view path.link { stroke: #1583a8; stroke-width: 3px; }
+  #chartWrap.look-ocean div.card-main .card-inner { outline: 3px solid #ffd166; }
+
+  #chartWrap.look-galaxy { font-family: 'Poppins', sans-serif; }
+  #chartWrap.look-galaxy div.card-male .card-inner, #chartWrap.look-galaxy .card-male .person-icon svg { background-color: #6a35ff; color: white; box-shadow: 0 0 14px #6a35ff; }
+  #chartWrap.look-galaxy div.card-female .card-inner, #chartWrap.look-galaxy .card-female .person-icon svg { background-color: #ff4fd8; color: white; box-shadow: 0 0 14px #ff4fd8; }
+  #chartWrap.look-galaxy .links_view path.link { stroke: #6fe3ff; stroke-width: 3px; filter: drop-shadow(0 0 3px #6fe3ff); }
+  #chartWrap.look-galaxy div.card-main .card-inner { outline: 3px solid #fff27a; }
+
+  #chartWrap.look-candy { font-family: 'Baloo 2', cursive; }
+  #chartWrap.look-candy div.card-male .card-inner, #chartWrap.look-candy .card-male .person-icon svg { background-color: #4fb0ff; color: white; }
+  #chartWrap.look-candy div.card-female .card-inner, #chartWrap.look-candy .card-female .person-icon svg { background-color: #ff8fd0; color: #4a1338; }
+  #chartWrap.look-candy .links_view path.link { stroke: #b083ff; stroke-width: 5px; }
+
+  #chartWrap.look-forest { font-family: 'Quicksand', sans-serif; }
+  #chartWrap.look-forest div.card-male .card-inner { background-color: #6b8f47; color: white; }
+  #chartWrap.look-forest div.card-female .card-inner { background-color: #c99a4b; color: white; }
+  #chartWrap.look-forest .links_view path.link { stroke: #4c6b33; stroke-width: 4px; }
+
+  #chartWrap.look-vintage { font-family: 'Playfair Display', serif; }
+  #chartWrap.look-vintage div.card-male .card-inner { background-color: #8a5a34; color: #fff6e6; }
+  #chartWrap.look-vintage div.card-female .card-inner { background-color: #b98255; color: #fff6e6; }
+  #chartWrap.look-vintage .links_view path.link { stroke: #6b4423; stroke-width: 3px; }
+
+  #chartWrap.look-sunset { font-family: 'Gabarito', sans-serif; }
+  #chartWrap.look-sunset div.card-male .card-inner, #chartWrap.look-sunset .card-male .person-icon svg { background-color: #ee6b4d; color: white; }
+  #chartWrap.look-sunset div.card-female .card-inner, #chartWrap.look-sunset .card-female .person-icon svg { background-color: #f2a922; color: white; }
+  #chartWrap.look-sunset .links_view path.link { stroke: #7a3f6b; stroke-width: 4px; }
+
+  #chartWrap.look-mint { font-family: 'Quicksand', sans-serif; }
+  #chartWrap.look-mint div.card-male .card-inner, #chartWrap.look-mint .card-male .person-icon svg { background-color: #2fb787; color: white; }
+  #chartWrap.look-mint div.card-female .card-inner, #chartWrap.look-mint .card-female .person-icon svg { background-color: #ffffff; color: #123f33; border: 2px solid #2fb787; }
+  #chartWrap.look-mint .links_view path.link { stroke: #1a6b56; stroke-width: 3px; }
+
+  #chartWrap .f3 { --background-color: transparent; --text-color: #222; }
+  #chartWrap.bg-navy .f3, #chartWrap.bg-starry .f3 { --text-color: #eaf4ff; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎛️ Family Tree Style Picker</h1>
+  <p>Mix and match — five independent dropdowns, one live tree.</p>
+</header>
+
+<div class="intro">
+  Everyone's project starts from the same <code>base.html</code>. This page is just for browsing ideas —
+  the family shown is made up, and nothing here needs downloading. Each dropdown changes <b>one thing</b>
+  the <code>family-chart</code> plugin actually supports, so you can mix any Look with any Background with
+  any Shape. Once you find a combo you like, copy the matching CSS/JS into your own project — the same
+  techniques are already in <code>examples.html</code>'s "Family Tree" category.
+</div>
+
+<div class="controls">
+  <div class="control">
+    <label for="lookSelect">1. Look (colors &amp; font)</label>
+    <select id="lookSelect"></select>
+  </div>
+  <div class="control">
+    <label for="shapeSelect">2. Card shape</label>
+    <select id="shapeSelect"></select>
+  </div>
+  <div class="control">
+    <label for="spacingSelect">3. Card spacing</label>
+    <select id="spacingSelect"></select>
+  </div>
+  <div class="control">
+    <label for="bgSelect">4. Background</label>
+    <select id="bgSelect"></select>
+  </div>
+  <div class="control">
+    <label for="extraSelect">5. Layout &amp; behavior</label>
+    <select id="extraSelect"></select>
+  </div>
+</div>
+
+<p class="current-info" id="currentInfo"></p>
+
+<div class="stage">
+  <div id="chartWrap">
+    <div id="FamilyChart" class="f3"></div>
+  </div>
+</div>
+
+<script>
+  // One made-up family. Every dropdown below redraws THIS SAME data with a
+  // different setting - the people never change, only how they're shown.
+  const FAMILY = [
+    { id: "1", data: { "first name": "Mei",  "last name": "Tan", birthday: "8 Apr 2015", gender: "F", about: "Loves drawing planets and asking 'why' a lot.", avatar: "https://i.pravatar.cc/300?img=47", "favourite food": "Chicken Rice", hobby: "Drawing" }, rels: { parents: ["2", "3"] } },
+    { id: "2", data: { "first name": "Wei Ming", "last name": "Tan", birthday: "3 Jan 1985", gender: "M", about: "Engineer by day, makes the best pancakes on Sunday.", avatar: "https://i.pravatar.cc/300?img=12", "favourite food": "Nasi Lemak", hobby: "Cycling" }, rels: { children: ["1"], spouses: ["3"], parents: ["4", "5"] } },
+    { id: "3", data: { "first name": "Hui Fang", "last name": "Lee", birthday: "22 Sep 1987", gender: "F", about: "A nurse who turns the balcony into a jungle every spring.", avatar: "https://i.pravatar.cc/300?img=45", "favourite food": "Laksa", hobby: "Gardening" }, rels: { children: ["1"], spouses: ["2"], parents: ["6", "7"] } },
+    { id: "4", data: { "first name": "Boon Huat", "last name": "Tan", birthday: "1958", gender: "M", about: "Retired teacher who still corrects everyone's grammar.", avatar: "https://i.pravatar.cc/300?img=51", "favourite food": "Bak Kut Teh", hobby: "Chess" }, rels: { children: ["2", "8"], spouses: ["5"] } },
+    { id: "5", data: { "first name": "Siew Lan", "last name": "Tan", birthday: "1960", gender: "F", about: "Bakes a tray of kueh lapis every single weekend.", avatar: "https://i.pravatar.cc/300?img=44", "favourite food": "Kueh Lapis", hobby: "Baking" }, rels: { children: ["2", "8"], spouses: ["4"] } },
+    { id: "6", data: { "first name": "Ah Kow", "last name": "Lee", birthday: "1956", gender: "M", about: "Knows every good fishing spot at the reservoir.", avatar: "https://i.pravatar.cc/300?img=53", "favourite food": "Fish Head Curry", hobby: "Fishing" }, rels: { children: ["3"], spouses: ["7"] } },
+    { id: "7", data: { "first name": "Yock Eng", "last name": "Lee", birthday: "1959", gender: "F", about: "Undefeated at mahjong every Friday night.", avatar: "https://i.pravatar.cc/300?img=41", "favourite food": "Char Kway Teow", hobby: "Mahjong" }, rels: { children: ["3"], spouses: ["6"] } },
+    { id: "8", data: { "first name": "Su Mei", "last name": "Tan", birthday: "1990", gender: "F", about: "Dad's younger sister, a graphic designer with very cool sneakers.", avatar: "https://i.pravatar.cc/300?img=32", "favourite food": "Sushi", hobby: "Painting" }, rels: { parents: ["4", "5"], spouses: ["9"], children: ["10"] } },
+    { id: "9", data: { "first name": "Marcus", "last name": "Goh", birthday: "1988", gender: "M", about: "Aunt Su Mei's husband, a chef who tests recipes on the family.", avatar: "https://i.pravatar.cc/300?img=14", "favourite food": "Ramen", hobby: "Cooking" }, rels: { spouses: ["8"], children: ["10"] } },
+    { id: "10", data: { "first name": "Ryan", "last name": "Goh", birthday: "2016", gender: "M", about: "My cousin - obsessed with Lego and dinosaurs.", avatar: "https://i.pravatar.cc/300?img=59", "favourite food": "Mac and Cheese", hobby: "Lego building" }, rels: { parents: ["8", "9"] } }
+  ];
+
+  const DISPLAY_FIELDS = [["first name", "last name"], ["birthday"], ["favourite food"], ["hobby"]];
+
+  // ---- Dropdown option sets. Every value maps directly to something the
+  // family-chart plugin (or plain CSS) actually supports. ----
+
+  const LOOKS = {
+    classic: "🌻 Classic Warm",
+    ocean:   "🌊 Deep Ocean",
+    galaxy:  "🌌 Galaxy Night",
+    candy:   "🍬 Candy Pop",
+    forest:  "🌲 Forest Trail",
+    vintage: "📜 Vintage Sepia",
+    sunset:  "🌅 Sunset Boardwalk",
+    mint:    "🌿 Mint Fresh"
+  };
+
+  // setCardHtml().setStyle(...) - the plugin's own card shapes.
+  const SHAPES = {
+    imageCircle:     "⭕ Round photo",
+    imageCircleRect: "🖼️ Round photo, wide box",
+    imageRect:       "🟪 Big square photo",
+    rect:            "▭ Plain rectangle (no photo)",
+    default:         "🔤 Plainest (no photo)"
+  };
+
+  // setCardXSpacing() / setCardYSpacing()
+  const SPACINGS = {
+    tight: { label: "🤏 Tight",  x: 100, y: 120 },
+    cozy:  { label: "📐 Cozy",   x: 150, y: 170 },
+    roomy: { label: "↔️ Roomy",  x: 190, y: 210 },
+    wide:  { label: "🌐 Wide",   x: 230, y: 250 }
+  };
+
+  const BACKGROUNDS = {
+    cream:  "🟡 Cream Canvas",
+    navy:   "🌌 Deep Navy",
+    starry: "✨ Starry Night",
+    pastel: "🎈 Pastel Gradient",
+    forest: "🍃 Forest Gradient",
+    paper:  "📃 Aged Paper",
+    sunset: "🌅 Sunset Gradient",
+    mint:   "🌿 Mint Gradient"
+  };
+
+  // Each of these calls Chart-class methods beyond plain CSS:
+  // setOrientationVertical/Horizontal, setAncestryDepth/setProgenyDepth,
+  // setTransitionTime.
+  const EXTRAS = {
+    normal:     { label: "✅ Normal (whole tree)",              orientation: "vertical",   ancestry: 100, progeny: 100, transition: 700 },
+    zoomed:     { label: "🔍 Zoomed in (immediate family only)", orientation: "vertical",   ancestry: 1,   progeny: 1,   transition: 700 },
+    horizontal: { label: "↔️ Horizontal layout",                orientation: "horizontal", ancestry: 100, progeny: 100, transition: 700 },
+    slowmo:     { label: "🐢 Slow-motion animation",             orientation: "vertical",   ancestry: 100, progeny: 100, transition: 2500 },
+    instant:    { label: "⚡ Instant (no animation)",            orientation: "vertical",   ancestry: 100, progeny: 100, transition: 0 }
+  };
+
+  function fillSelect(selectEl, options, defaultKey) {
+    Object.keys(options).forEach(key => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = typeof options[key] === "string" ? options[key] : options[key].label;
+      selectEl.appendChild(opt);
+    });
+    selectEl.value = defaultKey;
+  }
+
+  const lookSelect = document.getElementById("lookSelect");
+  const shapeSelect = document.getElementById("shapeSelect");
+  const spacingSelect = document.getElementById("spacingSelect");
+  const bgSelect = document.getElementById("bgSelect");
+  const extraSelect = document.getElementById("extraSelect");
+  const chartWrap = document.getElementById("chartWrap");
+  const currentInfo = document.getElementById("currentInfo");
+
+  fillSelect(lookSelect, LOOKS, "classic");
+  fillSelect(shapeSelect, SHAPES, "imageCircle");
+  fillSelect(spacingSelect, SPACINGS, "cozy");
+  fillSelect(bgSelect, BACKGROUNDS, "cream");
+  fillSelect(extraSelect, EXTRAS, "normal");
+
+  // A single chart, created once. Every dropdown just reconfigures and
+  // redraws it - never creates a second f3.createChart instance.
+  const chart = f3.createChart("#FamilyChart", JSON.parse(JSON.stringify(FAMILY)))
+    .setShowSiblingsOfMain(true);
+  const card = chart.setCardHtml().setCardDisplay(DISPLAY_FIELDS);
+
+  function applyAll() {
+    const look = lookSelect.value;
+    const shape = shapeSelect.value;
+    const spacing = SPACINGS[spacingSelect.value];
+    const bg = bgSelect.value;
+    const extra = EXTRAS[extraSelect.value];
+
+    chartWrap.className = "bg-" + bg + " look-" + look;
+
+    chart.setCardXSpacing(spacing.x).setCardYSpacing(spacing.y);
+    if (extra.orientation === "horizontal") chart.setOrientationHorizontal();
+    else chart.setOrientationVertical();
+    chart.setAncestryDepth(extra.ancestry).setProgenyDepth(extra.progeny);
+    chart.setTransitionTime(extra.transition);
+
+    card.setStyle(shape);
+
+    chart.updateTree({ initial: true, tree_position: "fit" });
+
+    currentInfo.innerHTML =
+      "<span class='chip'>setStyle('" + shape + "')</span>" +
+      "<span class='chip'>spacing " + spacing.x + "&times;" + spacing.y + "</span>" +
+      "<span class='chip'>ancestry " + extra.ancestry + " / progeny " + extra.progeny + "</span>" +
+      "<span class='chip'>" + extra.orientation + "</span>" +
+      "<span class='chip'>" + extra.transition + "ms transitions</span>";
+  }
+
+  [lookSelect, shapeSelect, spacingSelect, bgSelect, extraSelect].forEach(sel =>
+    sel.addEventListener("change", applyAll)
+  );
+
+  applyAll();
+</script>
+
+</body>
+</html>

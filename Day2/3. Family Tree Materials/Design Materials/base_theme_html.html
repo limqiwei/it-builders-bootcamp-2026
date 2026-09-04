@@ -1,0 +1,3092 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>IT Bootcamp - Code Examples Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+<!-- Only needed for the "Google Font Swap" example -->
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
+<!-- Needed for the family tree mini-demos in the "Family Tree" section -->
+<script src="https://unpkg.com/d3@7"></script>
+<script src="https://unpkg.com/family-chart@latest/dist/family-chart.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/family-chart@latest/dist/styles/family-chart.css">
+
+<!-- Needed for the popup examples -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Needed for the confetti / fireworks examples -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+  :root {
+    --green: #1a6b56;
+    --green-dark: #123f33;
+    --cream: #f5efd9;
+    --card: #fffdf6;
+    --orange: #ee6b4d;
+    --blue: #1d3f8f;
+    --gold: #f2a922;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Gabarito', 'Roboto', 'Arial';
+    background: var(--cream);
+    color: #222;
+    font-size: 19px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--green);
+    color: white;
+    padding: 40px 20px 54px;
+    text-align: center;
+    position: relative;
+  }
+  header h1 {
+    margin: 0 0 8px;
+    font-size: 2.6em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.2em;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 24px;
+    background-image: radial-gradient(circle at 12px 0, transparent 12px, var(--green) 13px);
+    background-size: 24px 24px;
+    background-repeat: repeat-x;
+  }
+
+  .banner-tag {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    font-weight: 800;
+    padding: 7px 18px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  /* ---------- Instructions banner ---------- */
+  .howto {
+    max-width: 820px;
+    margin: 36px auto 10px;
+    background: white;
+    border: 2px solid var(--orange);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .howto h2 {
+    margin: 0 0 8px;
+    color: var(--blue);
+    font-size: 1.3em;
+  }
+  .howto p { margin: 6px 0; line-height: 1.6; font-size: 0.95em; }
+
+  /* ---------- Category pills ---------- */
+  .categories {
+    max-width: 900px;
+    margin: 26px auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 0 20px;
+  }
+  .categories button {
+    border: 2px solid var(--green);
+    background: white;
+    color: var(--green);
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.9em;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .categories button.active {
+    background: var(--green);
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: #7a7360;
+    font-size: 1em;
+    padding: 30px 20px;
+    margin: 0;
+  }
+
+  /* ---------- Example card ---------- */
+  .gallery {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .example-card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid #e4dcc0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .example-head {
+    padding: 18px 22px;
+    border-bottom: 3px solid var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .example-num {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    font-weight: 800;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .example-head h3 {
+    margin: 0;
+    color: var(--green-dark);
+    font-size: 1.35em;
+    flex: 1;
+  }
+  .example-head .tag {
+    background: var(--blue);
+    color: white;
+    font-size: 0.7em;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .example-desc {
+    padding: 12px 22px 0 78px;
+    color: #444;
+    font-size: 1em;
+  }
+
+  .example-preview {
+    padding: 30px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: repeating-linear-gradient(45deg, #faf7ec, #faf7ec 10px, #f4efdc 10px, #f4efdc 20px);
+    min-height: 90px;
+  }
+
+  .example-actions {
+    padding: 16px 22px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-top: 1px dashed #ddd3ae;
+  }
+
+  .btn-small {
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  .btn-view-code { background: var(--blue); color: white; }
+  .btn-replay { background: var(--orange); color: white; }
+
+  .code-panel {
+    display: none;
+    padding: 4px 22px 20px;
+  }
+  .code-panel.open { display: block; }
+
+  .code-panel .instructions {
+    background: #fff7e0;
+    border: 1px dashed var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 14px;
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+
+  .code-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 12px 0 5px;
+  }
+
+  .code-label {
+    font-weight: 800;
+    color: var(--green-dark);
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-copy {
+    flex: none;
+    font-family: inherit;
+    font-weight: 700;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 14px;
+    cursor: pointer;
+    font-size: 0.82em;
+    background: var(--green);
+    color: white;
+  }
+  .btn-copy.copied { background: var(--gold); }
+
+  pre {
+    background: #faf8ef;
+    color: #1e1e1e;
+    border: 1px solid #e4dcc0;
+    padding: 16px 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.9em;
+    line-height: 1.6;
+    margin: 0;
+  }
+  pre code { font-family: 'Consolas', 'Courier New', monospace; }
+
+  /* ---------- Shared mini family-tree preview (Family Tree section) ---------- */
+  .mini-tree {
+    width: 100%;
+    height: 260px;
+    border-radius: 12px;
+    border: 1px solid #ddd3ae;
+    background: rgba(245, 245, 220, 0.5);
+  }
+  .mini-tree .f3 { --background-color: transparent; --text-color: #222; }
+
+  /* ================= DEMO WIDGET STYLES ================= */
+
+  /* -- Buttons category -- */
+  .demo-glow-btn {
+    background: #ff5da2; color: white; border: none; padding: 15px 30px;
+    font-size: 1.1em; font-weight: 800; border-radius: 999px; cursor: pointer; transition: 0.25s;
+  }
+  .demo-glow-btn:hover { background: #ff2f85; box-shadow: 0 0 25px #ff5da2; transform: scale(1.08); }
+
+  .demo-grow-btn {
+    background: #4fb0ff; color: white; border: none; padding: 15px 30px;
+    font-size: 1.1em; font-weight: 800; border-radius: 12px; cursor: pointer; transition: 0.2s;
+  }
+  .demo-grow-btn:hover { transform: scale(1.15); box-shadow: 0 10px 20px rgba(0,0,0,0.25); }
+
+  .demo-gradient-btn {
+    background: linear-gradient(90deg, #1a6b56, #4fd18a); background-size: 200% auto;
+    color: white; border: none; padding: 15px 30px; font-size: 1.1em; font-weight: 800;
+    border-radius: 999px; cursor: pointer; transition: 0.4s;
+  }
+  .demo-gradient-btn:hover { background-position: right center; }
+
+  .demo-outline-btn {
+    background: transparent; color: #1d3f8f; border: 3px solid #1d3f8f; padding: 13px 28px;
+    font-size: 1.1em; font-weight: 800; border-radius: 999px; cursor: pointer; transition: 0.25s;
+  }
+  .demo-outline-btn:hover { background: #1d3f8f; color: white; }
+
+  .demo-emoji-btn {
+    background: #f2a922; color: white; border: none; padding: 13px 26px; font-size: 1.1em;
+    font-weight: 800; border-radius: 12px; cursor: pointer;
+  }
+  .demo-emoji-btn span { display: inline-block; transition: transform 0.4s; }
+  .demo-emoji-btn:hover span { transform: rotate(360deg); }
+
+  .demo-press-btn {
+    background: #ee6b4d; color: white; border: none; padding: 15px 30px; font-size: 1.1em;
+    font-weight: 800; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 0 #b84e34; transition: 0.1s;
+  }
+  .demo-press-btn:active { box-shadow: 0 2px 0 #b84e34; transform: translateY(4px); }
+
+  .demo-spin-btn {
+    background: #123f33; color: white; border: none; padding: 12px 24px; font-size: 1em;
+    font-weight: 800; border-radius: 999px; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 10px;
+  }
+  .demo-spin-loader {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.35); border-top-color: white;
+    animation: demoSpin 0.8s linear infinite;
+  }
+  @keyframes demoSpin { to { transform: rotate(360deg); } }
+
+  /* -- Text & Fonts category -- */
+  .demo-rainbow-text {
+    font-size: 2em; font-weight: 900;
+    background: linear-gradient(90deg,#ff5da2,#f2a922,#4fd18a,#4fb0ff,#ff5da2);
+    background-size: 300% auto;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: demoRainbow 4s linear infinite;
+  }
+  @keyframes demoRainbow { to { background-position: 300% center; } }
+
+  .demo-neon-text {
+    color: white; font-size: 1.8em; font-weight: 900;
+    text-shadow: 0 0 8px #4fd18a, 0 0 20px #4fd18a, 0 0 40px #1a6b56;
+    background: #123f33; padding: 14px 24px; border-radius: 10px;
+  }
+
+  .demo-font-swap { font-family: 'Bangers', cursive; font-size: 2.2em; color: #ee6b4d; letter-spacing: 1px; }
+
+  .demo-3d-text {
+    font-size: 2em; font-weight: 900; color: #f2a922;
+    text-shadow: 1px 1px 0 #b8790a, 2px 2px 0 #b8790a, 3px 3px 0 #b8790a, 4px 4px 6px rgba(0,0,0,0.3);
+  }
+
+  /* -- Animations category -- */
+  .demo-bounce-box {
+    width: 74px; height: 74px; background: #4fb0ff; border-radius: 16px;
+    animation: demoBounce 1s ease infinite;
+  }
+  @keyframes demoBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+
+  .demo-spin-emoji { font-size: 3em; display: inline-block; animation: demoSpinEmoji 2s linear infinite; }
+  @keyframes demoSpinEmoji { to { transform: rotate(360deg); } }
+
+  .demo-shake-btn {
+    background: #1d3f8f; color: white; border: none; padding: 14px 26px;
+    font-size: 1.05em; font-weight: 800; border-radius: 12px; cursor: pointer;
+  }
+  .demo-shake-btn.shaking { animation: demoShake 0.4s; }
+  @keyframes demoShake {
+    10%, 90% { transform: translateX(-4px); }
+    20%, 80% { transform: translateX(6px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+
+  .demo-pulse-heart { font-size: 3em; display: inline-block; animation: demoPulse 1s ease-in-out infinite; }
+  @keyframes demoPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+
+  .demo-wobble { font-size: 3em; display: inline-block; animation: demoWobble 2s ease-in-out infinite; }
+  @keyframes demoWobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+
+  .demo-fadein {
+    animation: demoFadeIn 1.5s ease forwards; opacity: 0;
+    font-size: 1.5em; font-weight: 800; color: #1a6b56;
+  }
+  @keyframes demoFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* -- Backgrounds category -- */
+  /* ".demo-mini-page" stands in for "the whole page" in these previews, so
+     clicking a demo button doesn't repaint this entire gallery. */
+  .demo-mini-page {
+    width: 100%; padding: 26px 16px; border-radius: 12px; border: 2px dashed #b7ac86;
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center;
+    transition: background 0.3s; background: white; min-height: 60px;
+  }
+  .demo-mini-btn {
+    background: white; border: 2px solid #333; border-radius: 8px; padding: 8px 14px;
+    font-family: inherit; font-weight: 700; cursor: pointer;
+  }
+  .demo-gradient-box {
+    width: 100%; height: 110px; border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; color: white; font-weight: 800; font-size: 1.1em;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+  }
+  .demo-rainbow-bg {
+    width: 100%; height: 110px; border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; color: white; font-weight: 800; font-size: 1.1em;
+    background: linear-gradient(120deg, #ff5da2, #f2a922, #4fd18a, #4fb0ff, #ff5da2);
+    background-size: 300% 300%;
+    animation: demoRainbowBg 6s ease infinite;
+  }
+  @keyframes demoRainbowBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .demo-rain-box {
+    position: relative; width: 100%; height: 140px; overflow: hidden;
+    border-radius: 12px; border: 2px dashed #b7ac86; background: white;
+  }
+  .demo-rain-emoji {
+    position: absolute; top: -30px; font-size: 1.6em;
+    animation: demoRainFall 1.6s linear forwards;
+  }
+  @keyframes demoRainFall {
+    to { transform: translateY(170px); opacity: 0; }
+  }
+  .demo-dark-box {
+    width: 100%; padding: 24px; border-radius: 12px; text-align: center;
+    font-weight: 700; transition: 0.3s; background: #fdfaf0; color: #222;
+  }
+  .demo-dark-box.dark { background: #181818; color: #f0f0f0; }
+
+  /* -- Fun Popups category -- */
+  .demo-ripple-btn {
+    position: relative; overflow: hidden; background: #1a6b56; color: white; border: none;
+    padding: 16px 32px; font-size: 1.1em; font-weight: 800; border-radius: 10px; cursor: pointer;
+  }
+  .demo-ripple-span {
+    position: absolute; border-radius: 50%; background: rgba(255,255,255,0.6);
+    transform: scale(0); animation: demoRippleAnim 0.6s linear; pointer-events: none;
+  }
+  @keyframes demoRippleAnim { to { transform: scale(3); opacity: 0; } }
+
+  /* -- Family Tree category -- */
+  /* Every example below shows its own small live family tree, built from a
+     simple 3-person sample (Me / Dad / Mom), so you can try the effect
+     right here before copying the code into your own tree. */
+  .mini-tree { width: 100%; height: 220px; border-radius: 12px; border: 1px solid #ddd3ae; background: rgba(245,245,220,0.5); }
+  .mini-tree .f3 { --background-color: transparent; --text-color: #222; }
+
+  #ft-39 .card:hover .card-inner { outline: 4px solid #f2a922; cursor: pointer; }
+
+  #ft-40 div.card-male .card-inner, #ft-40 .card-male .person-icon svg { background-color: #2e259d; color: white; }
+  #ft-40 div.card-female .card-inner, #ft-40 .card-female .person-icon svg { background-color: #c52a9c; color: white; }
+
+  #ft-41 .links_view path.link { stroke: #7c5cff; stroke-width: 5px; }
+
+  .demo-tree-box { position: relative; }
+  .demo-flyby { position: fixed; font-size: 3em; pointer-events: none; z-index: 999; right: -80px; animation: demoFlyByMove 2s linear forwards; }
+  @keyframes demoFlyByMove { to { transform: translateX(calc(-100vw - 100px)); } }
+
+  .demo-field-drop { position: fixed; top: -60px; font-size: 2em; pointer-events: none; z-index: 999; animation: demoFieldDrop 1.6s cubic-bezier(0.3,0,0.8,1) forwards; }
+  @keyframes demoFieldDrop { 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+
+  .demo-float-reaction { position: fixed; font-size: 2em; pointer-events: none; z-index: 999; animation: demoFloatUp 1.2s ease-out forwards; }
+  @keyframes demoFloatUp { to { transform: translateY(-80px); opacity: 0; } }
+
+  .demo-curtain {
+    position: absolute; top: 0; bottom: 0; width: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1em; color: white; cursor: pointer; text-align: center; padding: 10px;
+    transition: transform 0.6s ease, opacity 0.6s ease; z-index: 5;
+  }
+  .demo-curtain-left  { left: 0;  background: #1a6b56; border-radius: 12px 0 0 12px; }
+  .demo-curtain-right { right: 0; background: #ee6b4d; border-radius: 0 12px 12px 0; }
+  .demo-curtain.opened-left  { transform: translateX(-100%); opacity: 0; }
+  .demo-curtain.opened-right { transform: translateX(100%);  opacity: 0; }
+
+  #ft-49.demo-tree-shaking { animation: demoTreeShake 0.4s; }
+  @keyframes demoTreeShake {
+    10%, 90% { transform: translateX(-4px); }
+    20%, 80% { transform: translateX(6px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+
+  #ft-50.theme-ocean div.card-male .card-inner, #ft-50.theme-ocean .card-male .person-icon svg { background-color: #1d3f8f; color: white; }
+  #ft-50.theme-ocean div.card-female .card-inner, #ft-50.theme-ocean .card-female .person-icon svg { background-color: #4fb0ff; color: white; }
+  #ft-50.theme-sunset div.card-male .card-inner, #ft-50.theme-sunset .card-male .person-icon svg { background-color: #ee6b4d; color: white; }
+  #ft-50.theme-sunset div.card-female .card-inner, #ft-50.theme-sunset .card-female .person-icon svg { background-color: #f2a922; color: white; }
+
+  #ft-51 .card-main .card-inner { outline: 4px solid #f2a922; }
+
+  #ft-52 #f3Canvas { background-color: rgba(245, 245, 220, 0.7); border-radius: 12px; border: 1px dotted grey; }
+
+  .demo-compare-row { display: flex; gap: 14px; width: 100%; flex-wrap: wrap; }
+  .demo-compare-row > div { flex: 1; min-width: 150px; }
+  .demo-compare-label { text-align: center; font-weight: 700; font-size: 0.82em; color: #123f33; margin-top: 6px; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <span class="banner-tag">IT Builders Bootcamp</span>
+  <h1>🎨 Code Examples Gallery</h1>
+  <p>Browse, preview, and copy code for your own website!</p>
+</header>
+
+<div class="howto">
+  <h2>📋 How this page works</h2>
+  <p>Scroll down and look at each example. Every example has a <b>number</b> — if you get stuck, tell us the number so we can help fast!</p>
+  <p>If you like one, click <b>View Code</b> to see the <b>&lt;style&gt;</b> and <b>&lt;script&gt;</b> code. Click <b>Copy</b> to copy it, then paste it into your own website in the matching <b>&lt;style&gt;</b> or <b>&lt;script&gt;</b> section.</p>
+  <p>Some examples work with your <b>family tree</b> itself, like making cards do something fun when you click them — look for the <b>Family Tree</b> tag!</p>
+  <p>Don't edit anything on this page — it's just for looking!</p>
+</div>
+
+<div class="categories">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="inline">Inline CSS</button>
+  <button data-filter="buttons">Buttons</button>
+  <button data-filter="text">Text &amp; Fonts</button>
+  <button data-filter="animations">Animations</button>
+  <button data-filter="backgrounds">Backgrounds</button>
+  <button data-filter="popups">Fun Popups</button>
+  <button data-filter="familytree">Family Tree</button>
+</div>
+
+<div class="gallery">
+
+<!-- EXAMPLES-MARKER -->
+<!-- ============ EXAMPLE 1 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">1</div>
+    <h3>🎉 Colorful Info Box</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">The simplest kind of example — no separate &lt;style&gt; section needed at all! Every style lives right inside the tag.</div>
+  <div class="example-preview">
+    <div style="background:#ffdf6b;color:#123f33;padding:16px 26px;border-radius:14px;font-weight:800;font-size:1.15em;text-align:center;">🎉 Welcome to my page!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code1')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code1">
+    <div class="instructions">
+      <b>How to use:</b> No &lt;style&gt; section needed — just copy the one line below straight into your &lt;body&gt;.
+      Everything you can change is right there inside <code>style="..."</code>. Try editing <code>background</code>, <code>color</code>, or the emoji and words.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;div style="background:#ffdf6b; color:#123f33; padding:16px 26px; border-radius:14px; font-weight:800; font-size:1.15em; text-align:center;"&gt;
+  🎉 Welcome to my page!
+&lt;/div&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 2 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">2</div>
+    <h3>🖼️ Rounded Photo Frame</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">Turns any picture into a neat circle with a colored frame around it.</div>
+  <div class="example-preview">
+    <img src="https://placehold.co/200x200" style="width:120px;height:120px;object-fit:cover;border-radius:50%;border:6px solid #f2a922;box-shadow:0 4px 14px rgba(0,0,0,0.25);">
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code2')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code2">
+    <div class="instructions">
+      <b>How to use:</b> Copy the line below into your &lt;body&gt;. Change <code>src="..."</code> to a link to your own photo.
+      Change <code>border-radius:50%</code> to <code>20px</code> for a rounded square instead of a circle. Change the border color too!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;img src="https://placehold.co/200x200" style="width:160px; height:160px; object-fit:cover; border-radius:50%; border:6px solid #f2a922; box-shadow:0 4px 14px rgba(0,0,0,0.25);"&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 3 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">3</div>
+    <h3>💭 Speech Bubble</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">A little chat-bubble box, great for a fun quote or a character talking.</div>
+  <div class="example-preview">
+    <div style="background:#eef6ff;color:#123f33;padding:16px 20px;border-radius:16px;max-width:260px;font-weight:700;border:3px solid #1d3f8f;">💭 I love building websites!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code3')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code3">
+    <div class="instructions">
+      <b>How to use:</b> Copy the line below into your &lt;body&gt;. Change the words, the <code>background</code> color, or the <code>border</code> color.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;div style="background:#eef6ff; color:#123f33; padding:16px 20px; border-radius:16px; max-width:260px; font-weight:700; border:3px solid #1d3f8f;"&gt;
+  💭 I love building websites!
+&lt;/div&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 4 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">4</div>
+    <h3>📊 Progress Bar</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">A bar that shows how "full" something is — like a loading bar or a skill level.</div>
+  <div class="example-preview">
+    <div style="width:100%;max-width:280px;background:#e6dfc4;border-radius:999px;height:22px;overflow:hidden;">
+      <div style="width:70%;height:100%;background:#1a6b56;"></div>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code4')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code4">
+    <div class="instructions">
+      <b>How to use:</b> Copy both lines into your &lt;body&gt; (the inner div must stay inside the outer div).
+      Change <code>width:70%</code> on the inner bar to any number between <code>0%</code> and <code>100%</code>.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;div style="width:100%; max-width:280px; background:#e6dfc4; border-radius:999px; height:22px; overflow:hidden;"&gt;
+  &lt;div style="width:70%; height:100%; background:#1a6b56;"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 5 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">5</div>
+    <h3>🏷️ Badge Label</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">A small colorful label you can stick next to a title, like "NEW!" or "COOL!".</div>
+  <div class="example-preview">
+    <span style="background:#ee6b4d;color:white;font-weight:800;padding:5px 14px;border-radius:999px;font-size:0.9em;letter-spacing:1px;">NEW!</span>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code5')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code5">
+    <div class="instructions">
+      <b>How to use:</b> Copy the line below anywhere in your &lt;body&gt;, right next to a heading or word. Change the text and the <code>background</code> color.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;span style="background:#ee6b4d; color:white; font-weight:800; padding:5px 14px; border-radius:999px; font-size:0.9em; letter-spacing:1px;"&gt;NEW!&lt;/span&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 6 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">6</div>
+    <h3>📦 Shadow Card</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">A floating card with a soft shadow underneath it, like it's lifted off the page.</div>
+  <div class="example-preview">
+    <div style="background:white;padding:22px 26px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.15);max-width:260px;font-weight:700;color:#123f33;">📦 A card with a shadow!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code6')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code6">
+    <div class="instructions">
+      <b>How to use:</b> Copy the line below into your &lt;body&gt;. In <code>box-shadow</code>, the 3rd number moves the shadow down, and the 4th number makes it blurrier.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;div style="background:white; padding:22px 26px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.15); max-width:260px; font-weight:700; color:#123f33;"&gt;
+  📦 A card with a shadow!
+&lt;/div&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 7 ============ -->
+<div class="example-card" data-category="inline">
+  <div class="example-head">
+    <div class="example-num">7</div>
+    <h3>🌈 Colorful Divider</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">A fun rainbow-colored line to separate sections of your page, instead of a boring gray one.</div>
+  <div class="example-preview">
+    <hr style="border:none;height:5px;background:linear-gradient(90deg,#1a6b56,#f2a922,#ee6b4d);border-radius:999px;width:80%;">
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code7')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code7">
+    <div class="instructions">
+      <b>How to use:</b> Copy the line below into your &lt;body&gt; wherever you want a divider. Change the 3 colors inside <code>linear-gradient(...)</code> to any colors you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;hr style="border:none; height:5px; background:linear-gradient(90deg,#1a6b56,#f2a922,#ee6b4d); border-radius:999px; width:80%;"&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 8 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">8</div>
+    <h3>✨ Glowing Button</h3>
+    <span class="tag">CSS + Hover</span>
+  </div>
+  <div class="example-desc">A button that glows and grows bigger when you hover your mouse over it.</div>
+  <div class="example-preview">
+    <button class="demo-glow-btn">Hover me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code8')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code8">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your &lt;style&gt; section. Then add <code>&lt;button class="glow-btn"&gt;Hover me!&lt;/button&gt;</code> in your &lt;body&gt;.
+      Change the two color values to any colors you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.glow-btn {
+  background: #ff5da2;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.glow-btn:hover {
+  background: #ff2f85;
+  box-shadow: 0 0 25px #ff5da2;
+  transform: scale(1.08);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 9 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">9</div>
+    <h3>🔍 Grow &amp; Shadow Button</h3>
+    <span class="tag">CSS + Hover</span>
+  </div>
+  <div class="example-desc">A button that pops up towards you with a shadow when you hover over it.</div>
+  <div class="example-preview">
+    <button class="demo-grow-btn">Hover me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code9')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code9">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;button class="grow-btn"&gt;Hover me!&lt;/button&gt;</code>.
+      Change <code>scale(1.15)</code> to a bigger or smaller number to change how much it grows.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.grow-btn {
+  background: #4fb0ff;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.grow-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 10 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">10</div>
+    <h3>🌈 Gradient Button</h3>
+    <span class="tag">CSS + Hover</span>
+  </div>
+  <div class="example-desc">A button with two colors blending together, that shifts when you hover.</div>
+  <div class="example-preview">
+    <button class="demo-gradient-btn">Hover me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code10')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code10">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;button class="gradient-btn"&gt;Hover me!&lt;/button&gt;</code>.
+      Change the two colors inside <code>linear-gradient(...)</code> to any colors you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.gradient-btn {
+  background: linear-gradient(90deg, #1a6b56, #4fd18a);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.gradient-btn:hover {
+  background-position: right center;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 11 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">11</div>
+    <h3>🖊️ Outline-to-Fill Button</h3>
+    <span class="tag">CSS + Hover</span>
+  </div>
+  <div class="example-desc">A button that starts see-through with just an outline, then fills in with color when you hover.</div>
+  <div class="example-preview">
+    <button class="demo-outline-btn">Hover me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code11')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code11">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;button class="outline-btn"&gt;Hover me!&lt;/button&gt;</code>.
+      Change <code>#1d3f8f</code> (in both places) to any color you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.outline-btn {
+  background: transparent;
+  color: #1d3f8f;
+  border: 3px solid #1d3f8f;
+  padding: 13px 28px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+.outline-btn:hover {
+  background: #1d3f8f;
+  color: white;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 12 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">12</div>
+    <h3>🌀 Spinning Emoji Button</h3>
+    <span class="tag">CSS + Hover</span>
+  </div>
+  <div class="example-desc">A button with an emoji inside that spins around when you hover.</div>
+  <div class="example-preview">
+    <button class="demo-emoji-btn"><span>⭐</span> Hover me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code12')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code12">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add this to your &lt;body&gt;:
+      <code>&lt;button class="emoji-btn"&gt;&lt;span&gt;⭐&lt;/span&gt; Hover me!&lt;/button&gt;</code>. Try swapping the ⭐ emoji for any other one!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.emoji-btn {
+  background: #f2a922;
+  color: white;
+  border: none;
+  padding: 13px 26px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.emoji-btn span {
+  display: inline-block;
+  transition: transform 0.4s;
+}
+.emoji-btn:hover span {
+  transform: rotate(360deg);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 13 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">13</div>
+    <h3>🕹️ 3D Press Button</h3>
+    <span class="tag">CSS + Click</span>
+  </div>
+  <div class="example-desc">A chunky button that looks like it physically pushes down when you click and hold it.</div>
+  <div class="example-preview">
+    <button class="demo-press-btn">Press me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code13')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code13">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;button class="press-btn"&gt;Press me!&lt;/button&gt;</code>. Click and hold it to see the press effect!
+      Change <code>0 6px 0 #b84e34</code> — a bigger first number makes it chunkier.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.press-btn {
+  background: #ee6b4d;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #b84e34;
+  transition: 0.1s;
+}
+.press-btn:active {
+  box-shadow: 0 2px 0 #b84e34;
+  transform: translateY(4px);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 14 ============ -->
+<div class="example-card" data-category="buttons">
+  <div class="example-head">
+    <div class="example-num">14</div>
+    <h3>⏳ Loading Spinner Button</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">A button with a little spinning circle inside — makes it look like something is loading.</div>
+  <div class="example-preview">
+    <button class="demo-spin-btn"><span class="demo-spin-loader"></span> Loading...</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code14')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code14">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add this to your &lt;body&gt;:
+      <code>&lt;button class="spin-btn"&gt;&lt;span class="spin-loader"&gt;&lt;/span&gt; Loading...&lt;/button&gt;</code>.
+      Change <code>0.8s</code> to spin faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.spin-btn {
+  background: #123f33;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1em;
+  font-weight: 800;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.spin-loader {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 15 ============ -->
+<div class="example-card" data-category="text">
+  <div class="example-head">
+    <div class="example-num">15</div>
+    <h3>🌈 Rainbow Text</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">Text that slowly cycles through all the colors of the rainbow, forever.</div>
+  <div class="example-preview">
+    <div class="demo-rainbow-text">Rainbow Text!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code15')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code15">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="rainbow-text"&gt;Rainbow Text!&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>4s</code> to make the colors cycle faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.rainbow-text {
+  font-size: 2em;
+  font-weight: 900;
+  background: linear-gradient(90deg,#ff5da2,#f2a922,#4fd18a,#4fb0ff,#ff5da2);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbowMove 4s linear infinite;
+}
+@keyframes rainbowMove {
+  to { background-position: 300% center; }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 16 ============ -->
+<div class="example-card" data-category="text">
+  <div class="example-head">
+    <div class="example-num">16</div>
+    <h3>💡 Neon Glow Text</h3>
+    <span class="tag">CSS only</span>
+  </div>
+  <div class="example-desc">Glowing text that looks like a neon sign, on a dark background.</div>
+  <div class="example-preview">
+    <div class="demo-neon-text">GLOW</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code16')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code16">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="neon-text"&gt;GLOW&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>#4fd18a</code> to any color to change the glow color.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.neon-text {
+  color: white;
+  font-size: 1.8em;
+  font-weight: 900;
+  text-shadow: 0 0 8px #4fd18a, 0 0 20px #4fd18a, 0 0 40px #1a6b56;
+  background: #123f33;
+  padding: 14px 24px;
+  border-radius: 10px;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 17 ============ -->
+<div class="example-card" id="ex17" data-category="text">
+  <div class="example-head">
+    <div class="example-num">17</div>
+    <h3>⌨️ Typewriter Effect</h3>
+    <span class="tag">JavaScript</span>
+  </div>
+  <div class="example-desc">Text that types itself out letter by letter, like someone is typing it live.</div>
+  <div class="example-preview">
+    <p id="typewriter-text" style="font-size:1.3em;font-weight:700;min-height:1.6em;"></p>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code17')">👀 View Code</button>
+    <button class="btn-small btn-replay" onclick="location.href='#ex17'; location.reload();">🔁 Replay</button>
+  </div>
+  <div class="code-panel" id="code17">
+    <div class="instructions">
+      <b>How to use:</b> Copy the HTML into your &lt;body&gt;, and the script into your &lt;script&gt; section.
+      Change the words inside <code>const text = "..."</code> to whatever you want typed out. Change <code>100</code> to type faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;p id="typewriter-text" style="font-size:1.3em; font-weight:700;"&gt;&lt;/p&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>const text = "Welcome to my website!";
+let i = 0;
+function typeWriter() {
+  if (i < text.length) {
+    document.getElementById('typewriter-text').innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeWriter, 100);
+  }
+}
+typeWriter();</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 18 ============ -->
+<div class="example-card" data-category="text">
+  <div class="example-head">
+    <div class="example-num">18</div>
+    <h3>🔤 Google Font Swap</h3>
+    <span class="tag">CSS only</span>
+  </div>
+  <div class="example-desc">Use a completely different, fun font from Google Fonts instead of the boring default one.</div>
+  <div class="example-preview">
+    <div class="demo-font-swap">POW! This is Bangers font!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code18')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code18">
+    <div class="instructions">
+      <b>How to use:</b> This needs 1 extra line in your &lt;head&gt;, then use <code>font-family</code> in a style to use it.
+      Want a different font? Go to <code>fonts.google.com</code>, pick one, and swap the name <code>Bangers</code> in both places below for the font you picked.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt;</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;link href="https://fonts.googleapis.com/css2?family=Bangers&amp;display=swap" rel="stylesheet"&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;h1 style="font-family:'Bangers', cursive; font-size:2.2em; color:#ee6b4d;"&gt;
+  POW! This is Bangers font!
+&lt;/h1&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 19 ============ -->
+<div class="example-card" data-category="text">
+  <div class="example-head">
+    <div class="example-num">19</div>
+    <h3>🧱 3D Text Shadow</h3>
+    <span class="tag">CSS only</span>
+  </div>
+  <div class="example-desc">Text that looks like it's popping out of the page in 3D, using layered shadows.</div>
+  <div class="example-preview">
+    <div class="demo-3d-text">3D!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code19')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code19">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="text-3d"&gt;3D!&lt;/div&gt;</code> in your &lt;body&gt;.
+      Add more lines like <code>5px 5px 0 #b8790a,</code> to make it stick out even further.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.text-3d {
+  font-size: 2em;
+  font-weight: 900;
+  color: #f2a922;
+  text-shadow:
+    1px 1px 0 #b8790a,
+    2px 2px 0 #b8790a,
+    3px 3px 0 #b8790a,
+    4px 4px 6px rgba(0,0,0,0.3);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 20 ============ -->
+<div class="example-card" data-category="text">
+  <div class="example-head">
+    <div class="example-num">20</div>
+    <h3>🖍️ Highlighter Text</h3>
+    <span class="tag">Inline CSS</span>
+  </div>
+  <div class="example-desc">Makes some words look like they've been marked with a yellow highlighter pen.</div>
+  <div class="example-preview">
+    <span style="font-size:1.3em;">Some words are <span style="background:linear-gradient(120deg,#ffe066 0%,#ffe066 100%);background-repeat:no-repeat;background-size:100% 45%;background-position:0 88%;font-weight:700;">highlighted</span> like this!</span>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code20')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code20">
+    <div class="instructions">
+      <b>How to use:</b> No &lt;style&gt; section needed. Copy the line below and only wrap the &lt;span&gt; around the words you want highlighted.
+      Change <code>#ffe066</code> to any highlighter color.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>Some words are &lt;span style="background:linear-gradient(120deg,#ffe066 0%,#ffe066 100%); background-repeat:no-repeat; background-size:100% 45%; background-position:0 88%; font-weight:700;"&gt;highlighted&lt;/span&gt; like this!</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 21 ============ -->
+<div class="example-card" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">21</div>
+    <h3>🔵 Bouncing Box</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">A box that bounces up and down forever. Great for making things feel alive!</div>
+  <div class="example-preview">
+    <div class="demo-bounce-box"></div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code21')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code21">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="bounce-box"&gt;&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>1s</code> to bounce faster or slower. Change <code>-30px</code> to jump higher or lower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.bounce-box {
+  width: 70px;
+  height: 70px;
+  background: #4fb0ff;
+  border-radius: 16px;
+  animation: bounceMove 1s ease infinite;
+}
+@keyframes bounceMove {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-30px); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 22 ============ -->
+<div class="example-card" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">22</div>
+    <h3>⚙️ Spinning Emoji</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">Any emoji, spinning around forever like a wheel.</div>
+  <div class="example-preview">
+    <div class="demo-spin-emoji">⚙️</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code22')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code22">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="spin-emoji"&gt;⚙️&lt;/div&gt;</code> in your &lt;body&gt;.
+      Swap ⚙️ for any emoji, and change <code>2s</code> to spin faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.spin-emoji {
+  font-size: 3em;
+  display: inline-block;
+  animation: spinMove 2s linear infinite;
+}
+@keyframes spinMove {
+  to { transform: rotate(360deg); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 23 ============ -->
+<div class="example-card" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">23</div>
+    <h3>📳 Shake On Click</h3>
+    <span class="tag">CSS + JavaScript</span>
+  </div>
+  <div class="example-desc">A button that shakes side to side when you click it, like it's saying "no!"</div>
+  <div class="example-preview">
+    <button class="demo-shake-btn" id="shake-demo-btn">Click me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code23')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code23">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, the button into &lt;body&gt;, and the script into &lt;script&gt;.
+      Don't touch the script part! Change <code>0.4s</code> to shake faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.shake-btn {
+  background: #1d3f8f;
+  color: white;
+  border: none;
+  padding: 14px 26px;
+  font-size: 1.05em;
+  font-weight: 800;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.shaking {
+  animation: shakeMove 0.4s;
+}
+@keyframes shakeMove {
+  10%, 90% { transform: translateX(-4px); }
+  20%, 80% { transform: translateX(6px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button id="my-button" class="shake-btn"&gt;Click me!&lt;/button&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+const myButton = document.getElementById('my-button');
+myButton.addEventListener('click', function () {
+  myButton.classList.add('shaking');
+});
+myButton.addEventListener('animationend', function () {
+  myButton.classList.remove('shaking');
+});</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 24 ============ -->
+<div class="example-card" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">24</div>
+    <h3>❤️ Pulsing Heart</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">A heart (or any emoji) that grows and shrinks like it's beating.</div>
+  <div class="example-preview">
+    <div class="demo-pulse-heart">❤️</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code24')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code24">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="pulse-heart"&gt;❤️&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>1.3</code> to pulse bigger or smaller.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.pulse-heart {
+  font-size: 3em;
+  display: inline-block;
+  animation: pulseMove 1s ease-in-out infinite;
+}
+@keyframes pulseMove {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 25 ============ -->
+<div class="example-card" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">25</div>
+    <h3>🔔 Wobbling Emoji</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">An emoji that gently wobbles side to side, forever.</div>
+  <div class="example-preview">
+    <div class="demo-wobble">🔔</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code25')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code25">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="wobble"&gt;🔔&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>8deg</code> to wobble further or less.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.wobble {
+  font-size: 3em;
+  display: inline-block;
+  animation: wobbleMove 2s ease-in-out infinite;
+}
+@keyframes wobbleMove {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-8deg); }
+  75%      { transform: rotate(8deg); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 26 ============ -->
+<div class="example-card" id="ex26" data-category="animations">
+  <div class="example-head">
+    <div class="example-num">26</div>
+    <h3>👋 Fade In On Load</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">Text (or anything) that gently fades and slides into view when the page loads.</div>
+  <div class="example-preview">
+    <div class="demo-fadein">👋 Hello there!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code26')">👀 View Code</button>
+    <button class="btn-small btn-replay" onclick="location.href='#ex26'; location.reload();">🔁 Replay</button>
+  </div>
+  <div class="code-panel" id="code26">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then add <code>&lt;div class="fade-in"&gt;👋 Hello there!&lt;/div&gt;</code> in your &lt;body&gt;.
+      Change <code>1.5s</code> to make it fade in faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.fade-in {
+  animation: fadeMove 1.5s ease forwards;
+  opacity: 0;
+  font-size: 1.5em;
+  font-weight: 800;
+  color: #1a6b56;
+}
+@keyframes fadeMove {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 27 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">27</div>
+    <h3>🎨 Background Color Switcher</h3>
+    <span class="tag">JavaScript</span>
+  </div>
+  <div class="example-desc">Buttons that change your whole page's background color when clicked.</div>
+  <div class="example-preview">
+    <div class="demo-mini-page" id="bgswitch-demo">
+      <button class="demo-mini-btn" onclick="document.getElementById('bgswitch-demo').style.background='#ffd166'">🟡 Yellow</button>
+      <button class="demo-mini-btn" onclick="document.getElementById('bgswitch-demo').style.background='#4fb0ff'">🔵 Blue</button>
+      <button class="demo-mini-btn" onclick="document.getElementById('bgswitch-demo').style.background='#4fd18a'">🟢 Green</button>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code27')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code27">
+    <div class="instructions">
+      <b>How to use:</b> Copy the buttons into your &lt;body&gt;. No &lt;style&gt; needed!
+      <b>Note:</b> in this preview the buttons only color the little box above (so we don't repaint the whole gallery) — but on your own page, <code>document.body</code> means the whole page will change color.
+      Add more buttons with more colors if you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="document.body.style.background='#ffd166'"&gt;🟡 Yellow&lt;/button&gt;
+&lt;button onclick="document.body.style.background='#4fb0ff'"&gt;🔵 Blue&lt;/button&gt;
+&lt;button onclick="document.body.style.background='#4fd18a'"&gt;🟢 Green&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 28 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">28</div>
+    <h3>🌇 Gradient Background</h3>
+    <span class="tag">CSS only</span>
+  </div>
+  <div class="example-desc">A smooth blend between two colors covering the whole background.</div>
+  <div class="example-preview">
+    <div class="demo-gradient-box">Your page!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code28')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code28">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your &lt;style&gt; section — it changes your whole page's background.
+      Change the two colors in <code>linear-gradient(...)</code>, and try <code>135deg</code> to <code>90deg</code> or <code>0deg</code> to change the direction.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>body {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 29 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">29</div>
+    <h3>🖼️ Background Image Changer</h3>
+    <span class="tag">JavaScript</span>
+  </div>
+  <div class="example-desc">A button that swaps your background for a picture from the internet.</div>
+  <div class="example-preview">
+    <div class="demo-mini-page" id="bgimg-demo">
+      <button class="demo-mini-btn" onclick="document.getElementById('bgimg-demo').style.backgroundImage='url(https://picsum.photos/500/300)'; document.getElementById('bgimg-demo').style.backgroundSize='cover';">🖼️ Change background</button>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code29')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code29">
+    <div class="instructions">
+      <b>How to use:</b> Copy the button into your &lt;body&gt;. <b>Note:</b> the preview only changes the little box above, but on your page it changes the whole background.
+      Change the web address inside <code>url('...')</code> to any image link you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="document.body.style.backgroundImage = 'url(https://picsum.photos/500/300)'; document.body.style.backgroundSize = 'cover';"&gt;
+  🖼️ Change background
+&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 30 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">30</div>
+    <h3>🌈 Animated Rainbow Background</h3>
+    <span class="tag">CSS Animation</span>
+  </div>
+  <div class="example-desc">A background that slowly shifts through colors, forever.</div>
+  <div class="example-preview">
+    <div class="demo-rainbow-bg">Your page!</div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code30')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code30">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your &lt;style&gt; section — it changes your whole page's background.
+      Change <code>6s</code> to shift colors faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>body {
+  background: linear-gradient(120deg, #ff5da2, #f2a922, #4fd18a, #4fb0ff, #ff5da2);
+  background-size: 300% 300%;
+  animation: rainbowBgMove 6s ease infinite;
+}
+@keyframes rainbowBgMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 31 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">31</div>
+    <h3>🌧️ Emoji Rain</h3>
+    <span class="tag">JavaScript + CSS</span>
+  </div>
+  <div class="example-desc">A button that makes emoji fall from the top of the page like rain.</div>
+  <div class="example-preview">
+    <div class="demo-rain-box" id="rain-demo">
+      <button class="demo-mini-btn" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);" onclick="startEmojiRain()">🌧️ Make it rain!</button>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code31')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code31">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, the button into &lt;body&gt;, and the script into &lt;script&gt;.
+      Change the emoji <code>'🌧️'</code> to any emoji you like, and change <code>12</code> to make more or fewer fall.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.falling-emoji {
+  position: fixed;
+  top: -40px;
+  font-size: 2em;
+  pointer-events: none;
+  z-index: 999;
+  animation: rainFall 3s linear forwards;
+}
+@keyframes rainFall {
+  to { transform: translateY(110vh); }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="makeItRain()"&gt;🌧️ Make it rain!&lt;/button&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>function makeItRain() {
+  for (let i = 0; i < 12; i++) {
+    const emoji = document.createElement('div');
+    emoji.textContent = '🌧️';
+    emoji.className = 'falling-emoji';
+    emoji.style.left = Math.random() * 100 + 'vw';
+    emoji.style.animationDelay = (Math.random() * 0.5) + 's';
+    document.body.appendChild(emoji);
+    emoji.addEventListener('animationend', () => emoji.remove());
+  }
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 32 ============ -->
+<div class="example-card" data-category="backgrounds">
+  <div class="example-head">
+    <div class="example-num">32</div>
+    <h3>🌙 Dark Mode Toggle</h3>
+    <span class="tag">JavaScript + CSS</span>
+  </div>
+  <div class="example-desc">A button that flips your page between light mode and dark mode.</div>
+  <div class="example-preview">
+    <div class="demo-dark-box" id="darkmode-demo">
+      🌗 This box flips dark/light!
+      <br><br>
+      <button class="demo-mini-btn" onclick="document.getElementById('darkmode-demo').classList.toggle('dark')">Toggle dark mode</button>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code32')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code32">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt; and the button into &lt;body&gt;.
+      Change the colors after <code>body.dark</code> to any dark-mode colors you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>body {
+  background: #fdfaf0;
+  color: #222;
+  transition: 0.3s;
+}
+body.dark {
+  background: #181818;
+  color: #f0f0f0;
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="document.body.classList.toggle('dark')"&gt;Toggle dark mode&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 33 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">33</div>
+    <h3>💬 Beautiful Alert</h3>
+    <span class="tag">JS + Library</span>
+  </div>
+  <div class="example-desc">A pretty popup message box, way nicer than the boring browser alert().</div>
+  <div class="example-preview">
+    <button style="background:#7c5cff;color:white;padding:13px 24px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:1em;"
+      onclick="beautifulAlert('Hello there!')">Click me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code33')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code33">
+    <div class="instructions">
+      <b>How to use:</b> This one needs 1 extra line in your &lt;head&gt; (only once, even if you use more popup examples).
+      Then copy the &lt;script&gt; code below. To show your own message, change the words inside <code>beautifulAlert('...')</code>.
+      You can also change the button's color by editing <code>confirmButtonColor: '#7c5cff'</code> to any color you like!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function beautifulAlert(message) {
+  Swal.fire({
+    text: message,
+    confirmButtonColor: '#7c5cff'   // <-- you CAN change this color!
+  });
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Then call it from a button (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="beautifulAlert('Hello there!')"&gt;Click me!&lt;/button&gt;
+
+&lt;!-- Change the words inside the quotes to change the message --&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 34 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">34</div>
+    <h3>❓ Beautiful Confirm (Yes/No)</h3>
+    <span class="tag">JS + Library</span>
+  </div>
+  <div class="example-desc">A popup that asks a question with Yes/No buttons, instead of just showing a message.</div>
+  <div class="example-preview">
+    <button style="background:#1a6b56;color:white;padding:13px 24px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:1em;"
+      onclick="beautifulConfirm('Do you like pizza?')">Ask a question</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code34')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code34">
+    <div class="instructions">
+      <b>How to use:</b> Needs the same &lt;head&gt; line as example 33 (only once). Change the words inside <code>beautifulConfirm('...')</code> to ask your own question.
+      You can also change <code>confirmButtonColor</code> and <code>cancelButtonColor</code>!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function beautifulConfirm(question) {
+  Swal.fire({
+    title: question,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Yes!',    // <-- you CAN change this text!
+    cancelButtonText: 'No',       // <-- you CAN change this text!
+    confirmButtonColor: '#1a6b56',
+    cancelButtonColor: '#ee6b4d'
+  });
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Then call it from a button (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="beautifulConfirm('Do you like pizza?')"&gt;Ask a question&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 35 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">35</div>
+    <h3>🍞 Success Toast</h3>
+    <span class="tag">JS + Library</span>
+  </div>
+  <div class="example-desc">A small friendly notification that pops up in the corner and disappears by itself.</div>
+  <div class="example-preview">
+    <button style="background:#4fb0ff;color:white;padding:13px 24px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:1em;"
+      onclick="funToast('Saved successfully!')">Show toast</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code35')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code35">
+    <div class="instructions">
+      <b>How to use:</b> Needs the same &lt;head&gt; line as example 33 (only once). Change the words inside <code>funToast('...')</code>.
+      You can also change <code>icon: 'success'</code> to <code>'error'</code>, <code>'warning'</code>, or <code>'info'</code>, and <code>timer: 2000</code> to show it longer or shorter (in milliseconds).
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function funToast(message) {
+  Swal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: 'success',        // <-- you CAN change this!
+    title: message,
+    showConfirmButton: false,
+    timer: 2000,             // <-- you CAN change this!
+    timerProgressBar: true
+  });
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Then call it from a button (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="funToast('Saved successfully!')"&gt;Show toast&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 36 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">36</div>
+    <h3>🎊 Confetti Burst</h3>
+    <span class="tag">JS + Library</span>
+  </div>
+  <div class="example-desc">A button that bursts colorful confetti all over the screen.</div>
+  <div class="example-preview">
+    <button style="background:#ee6b4d;color:white;padding:13px 24px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:1em;"
+      onclick="funConfetti()">🎊 Celebrate!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code36')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code36">
+    <div class="instructions">
+      <b>How to use:</b> This one needs 1 extra line in your &lt;head&gt; (only once). Change <code>particleCount</code> to burst more or less confetti.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function funConfetti() {
+  confetti({
+    particleCount: 150,   // <-- you CAN change this!
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Then call it from a button (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="funConfetti()"&gt;🎊 Celebrate!&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 37 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">37</div>
+    <h3>🎆 Fireworks</h3>
+    <span class="tag">JS + Library</span>
+  </div>
+  <div class="example-desc">Confetti launches from both sides of the screen, like fireworks.</div>
+  <div class="example-preview">
+    <button style="background:#123f33;color:white;padding:13px 24px;border-radius:8px;border:none;font-weight:700;cursor:pointer;font-family:inherit;font-size:1em;"
+      onclick="funFireworks()">🎆 Launch fireworks</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code37')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code37">
+    <div class="instructions">
+      <b>How to use:</b> Needs the same &lt;head&gt; line as example 36 (only once). Change either <code>particleCount</code> to launch more or less from each side.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function funFireworks() {
+  confetti({ particleCount: 80, angle: 60,  spread: 55, origin: { x: 0 } });
+  confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } });
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Then call it from a button (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="funFireworks()"&gt;🎆 Launch fireworks&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 38 ============ -->
+<div class="example-card" data-category="popups">
+  <div class="example-head">
+    <div class="example-num">38</div>
+    <h3>💧 Click Ripple Effect</h3>
+    <span class="tag">CSS + JavaScript</span>
+  </div>
+  <div class="example-desc">A button that shows a spreading ripple wherever you click it, like a water drop.</div>
+  <div class="example-preview">
+    <button class="demo-ripple-btn" id="ripple-demo-btn">Click anywhere on me!</button>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code38')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code38">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, the button into &lt;body&gt;, and the script into &lt;script&gt;.
+      Don't touch the script part! Change <code>background</code> on <code>.ripple-btn</code> to any button color you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.ripple-btn {
+  position: relative;
+  overflow: hidden;
+  background: #1a6b56;
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  font-size: 1.1em;
+  font-weight: 800;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.ripple-span {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.6);
+  transform: scale(0);
+  animation: rippleMove 0.6s linear;
+  pointer-events: none;
+}
+@keyframes rippleMove {
+  to { transform: scale(3); opacity: 0; }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button id="my-ripple-btn" class="ripple-btn"&gt;Click anywhere on me!&lt;/button&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy into &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+const rippleBtn = document.getElementById('my-ripple-btn');
+rippleBtn.addEventListener('click', function (e) {
+  const rect = rippleBtn.getBoundingClientRect();
+  const span = document.createElement('span');
+  span.className = 'ripple-span';
+  span.style.left = (e.clientX - rect.left - 10) + 'px';
+  span.style.top = (e.clientY - rect.top - 10) + 'px';
+  span.style.width = span.style.height = '20px';
+  rippleBtn.appendChild(span);
+  span.addEventListener('animationend', () => span.remove());
+});</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 39 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">39</div>
+    <h3>✨ Highlight Card on Hover</h3>
+    <span class="tag">Family Tree · CSS only</span>
+  </div>
+  <div class="example-desc">Any card in your family tree glows when you hover your mouse over it. Try it on the little tree below!</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-39"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code39')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code39">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your family tree's &lt;style&gt; section (the one with <code>#toolbar</code> and <code>#FamilyChart</code> in it).
+      Change <code>#f2a922</code> to any glow color, and <code>4px</code> to a thicker or thinner glow.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.f3 .card:hover .card-inner {
+  outline: 4px solid #f2a922;
+  cursor: pointer;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 40 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">40</div>
+    <h3>🎨 Recolor Male &amp; Female Cards</h3>
+    <span class="tag">Family Tree · CSS only</span>
+  </div>
+  <div class="example-desc">Change the card colors for the boys and girls in your tree.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-40"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code40')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code40">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your family tree's &lt;style&gt; section. Your base.html already has a version of this — just change the two color values!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.f3 div.card-male .card-inner, .f3 div.card-male .person-icon svg {
+  background-color: #2e259d;
+  color: white;
+}
+.f3 div.card-female .card-inner, .f3 div.card-female .person-icon svg {
+  background-color: #c52a9c;
+  color: white;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 41 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">41</div>
+    <h3>🔗 Style the Connecting Lines</h3>
+    <span class="tag">Family Tree · CSS only</span>
+  </div>
+  <div class="example-desc">Change the color and thickness of the lines connecting family members.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-41"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code41')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code41">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your family tree's &lt;style&gt; section. Change <code>#7c5cff</code> to any color, and <code>5px</code> to a thicker or thinner line.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.f3 .links_view path.link {
+  stroke: #7c5cff;
+  stroke-width: 5px;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 42 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">42</div>
+    <h3>🎊 Confetti When You Click a Card</h3>
+    <span class="tag">Family Tree · JavaScript</span>
+  </div>
+  <div class="example-desc">Click any person in your tree and confetti bursts on screen. Try clicking a card below!</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-42"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code42')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code42">
+    <div class="instructions">
+      <b>How to use:</b> This needs the confetti library — add the &lt;head&gt; line below (skip it if you already added it for another example).
+      Then copy the script below to the very bottom of your family tree's last &lt;script&gt;, after <code>f3Chart</code> is created.
+      Don't touch the script! You can change <code>particleCount</code> if you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🧱 Add this inside &lt;head&gt;&lt;/head&gt; (only needed once)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"&gt;&lt;/script&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function attachCardClickCelebration() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', () => {
+      confetti({ particleCount: 60, spread: 60, origin: { y: 0.5 } });   // <-- you CAN change particleCount!
+    });
+  });
+}
+f3Chart.setAfterUpdate(attachCardClickCelebration)
+attachCardClickCelebration()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 43 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">43</div>
+    <h3>🚀 Flying Emoji on Card Click</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Click a card and a rocket (or any emoji!) flies right across the screen. Give it a try below!</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-43"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code43')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code43">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then copy the script below your <code>f3Chart</code> setup.
+      Change the emoji <code>'🚀'</code> to any emoji you like!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.flyby {
+  position: fixed;
+  font-size: 3em;
+  pointer-events: none;
+  z-index: 999;
+  right: -80px;
+  animation: flyByMove 2s linear forwards;
+}
+@keyframes flyByMove {
+  to { transform: translateX(calc(-100vw - 100px)); }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function triggerFlyBy() {
+  const el = document.createElement('div');
+  el.textContent = '🚀';   // <-- you CAN change this emoji!
+  el.className = 'flyby';
+  el.style.top = (Math.random() * 70 + 10) + 'vh';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+function attachFlyByListeners() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', triggerFlyBy);
+  });
+}
+f3Chart.setAfterUpdate(attachFlyByListeners)
+attachFlyByListeners()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 44 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">44</div>
+    <h3>🎨 Background Changes on Card Click</h3>
+    <span class="tag">Family Tree · JavaScript</span>
+  </div>
+  <div class="example-desc">Click a card and your whole page background changes to a random color.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-44"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code44')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code44">
+    <div class="instructions">
+      <b>How to use:</b> Copy the script below your <code>f3Chart</code> setup.
+      <b>Note:</b> in this preview it only changes the little box behind the tree (so we don't repaint the whole gallery) — on your page it changes <code>document.body</code>, your whole background.
+      Add more colors to the list if you like!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function attachBackgroundChange() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', () => {
+      const colors = ['#ffd166', '#4fb0ff', '#4fd18a', '#ff5da2'];   // <-- you CAN add more colors!
+      document.body.style.background = colors[Math.floor(Math.random() * colors.length)];
+    });
+  });
+}
+f3Chart.setAfterUpdate(attachBackgroundChange)
+attachBackgroundChange()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 45 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">45</div>
+    <h3>🔊 Card Click Sound Effect</h3>
+    <span class="tag">Family Tree · JavaScript</span>
+  </div>
+  <div class="example-desc">Click a card and hear a little "beep" sound. No sound file needed — the computer makes the sound itself!</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-45"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code45')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code45">
+    <div class="instructions">
+      <b>How to use:</b> Copy the script below your <code>f3Chart</code> setup. No downloads needed!
+      Change <code>frequency.value = 600</code> to a bigger number for a higher-pitched beep, or smaller for a lower one.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function playCardSound() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = 600;   // <-- you CAN change this!
+  gain.gain.setValueAtTime(0.2, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.3);
+}
+function attachCardSound() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', playCardSound);
+  });
+}
+f3Chart.setAfterUpdate(attachCardSound)
+attachCardSound()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 46 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">46</div>
+    <h3>🥩 Falling Emoji From a Card</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Click a specific word on someone's card (like their favourite food) and emoji rain down. Try clicking "pizza" below!</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-46"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code46')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code46">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then the script below your <code>f3Chart</code> setup.
+      Change <code>TARGET_WORD</code> to match a word that's actually on YOUR tree (like someone's favourite food), and change <code>DROP_EMOJI</code> to match it.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.field-emoji-drop {
+  position: fixed;
+  top: -60px;
+  font-size: 2em;
+  pointer-events: none;
+  z-index: 999;
+  animation: fieldDropFall 1.6s cubic-bezier(0.3,0,0.8,1) forwards;
+}
+@keyframes fieldDropFall {
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>const TARGET_WORD = 'pizza';   // <-- change to a word on YOUR tree!
+const DROP_EMOJI = '🍕';        // <-- change this emoji too!
+
+// Don't touch anything below this line.
+function dropEmojiRain() {
+  for (let i = 0; i < 6; i++) {
+    const el = document.createElement('div');
+    el.textContent = DROP_EMOJI;
+    el.className = 'field-emoji-drop';
+    el.style.left = (5 + i * 16) + 'vw';
+    el.style.animationDelay = (i * 0.12) + 's';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+function attachFieldClickListeners() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.querySelectorAll('span, div').forEach(el => {
+      if (el.textContent.trim().toLowerCase() === TARGET_WORD) {
+        el.style.cursor = 'pointer';
+        el.style.textDecoration = 'underline dotted';
+        el.addEventListener('mousedown', (e) => {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          dropEmojiRain();
+        });
+      }
+    });
+  });
+}
+f3Chart.setAfterUpdate(attachFieldClickListeners)
+attachFieldClickListeners()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 47 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">47</div>
+    <h3>❤️ Emoji Reaction Floats From Card</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Click a card and a little heart floats up from it and fades away, like a "like" reaction.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-47"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code47')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code47">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then the script below your <code>f3Chart</code> setup. Change <code>'❤️'</code> to any emoji you like.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.float-reaction {
+  position: fixed;
+  font-size: 2em;
+  pointer-events: none;
+  z-index: 999;
+  animation: floatUpMove 1.2s ease-out forwards;
+}
+@keyframes floatUpMove {
+  to { transform: translateY(-80px); opacity: 0; }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function floatEmojiFrom(cardEl) {
+  const rect = cardEl.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.textContent = '❤️';   // <-- you CAN change this emoji!
+  el.className = 'float-reaction';
+  el.style.left = (rect.left + rect.width / 2 - 15) + 'px';
+  el.style.top = rect.top + 'px';
+  document.body.appendChild(el);
+  el.addEventListener('animationend', () => el.remove());
+}
+function attachReactionListeners() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', () => floatEmojiFrom(cardEl));
+  });
+}
+f3Chart.setAfterUpdate(attachReactionListeners)
+attachReactionListeners()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 48 ============ -->
+<div class="example-card" id="ex48" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">48</div>
+    <h3>🎭 Curtain Reveal Intro</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Two curtains cover your tree until someone clicks each one to open it, like unveiling a surprise. Click both sides below!</div>
+  <div class="example-preview">
+    <div class="mini-tree demo-tree-box" id="ft-48-wrap">
+      <div class="mini-tree" id="ft-48" style="border:none;"></div>
+      <div class="demo-curtain demo-curtain-left" id="ft-48-curtain-l">👈 Click to reveal</div>
+      <div class="demo-curtain demo-curtain-right" id="ft-48-curtain-r">👉 Click to reveal</div>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code48')">👀 View Code</button>
+    <button class="btn-small btn-replay" onclick="location.href='#ex48'; location.reload();">🔁 Replay</button>
+  </div>
+  <div class="code-panel" id="code48">
+    <div class="instructions">
+      <b>How to use:</b> Your base.html already wraps &lt;div id="FamilyChart"&gt; in a <code>&lt;div style="position:relative"&gt;</code> — add the two curtain divs right after your FamilyChart div, inside that same wrapper.
+      Copy the CSS into &lt;style&gt; and the script below your <code>f3Chart</code> setup. Change the two background colors and the words on each curtain.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.3em;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.curtain-left  { left: 0;  background: #1a6b56; border-radius: 12px 0 0 12px; }
+.curtain-right { right: 0; background: #ee6b4d; border-radius: 0 12px 12px 0; }
+.curtain.opened-left  { transform: translateX(-100%); opacity: 0; }
+.curtain.opened-right { transform: translateX(100%);  opacity: 0; }</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (add inside your FamilyChart wrapper)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;div class="curtain curtain-left" onclick="openCurtain(this, 'left')"&gt;👈 Click to reveal&lt;/div&gt;
+&lt;div class="curtain curtain-right" onclick="openCurtain(this, 'right')"&gt;👉 Click to reveal&lt;/div&gt;</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy anywhere in your &lt;script&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function openCurtain(el, direction) {
+  el.classList.add(direction === 'left' ? 'opened-left' : 'opened-right');
+  setTimeout(() => el.remove(), 600);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 49 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">49</div>
+    <h3>📳 Shake The Whole Tree</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Click any card and the entire tree shakes side to side.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-49"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code49')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code49">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt;, then the script below your <code>f3Chart</code> setup. Change <code>0.4s</code> to shake faster or slower.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.tree-shake {
+  animation: treeShakeMove 0.4s;
+}
+@keyframes treeShakeMove {
+  10%, 90% { transform: translateX(-4px); }
+  20%, 80% { transform: translateX(6px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (copy after your f3Chart setup)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>// Don't touch this part! Leave it exactly as it is.
+function attachTreeShake() {
+  document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+    cardEl.addEventListener('click', () => {
+      const tree = document.getElementById('FamilyChart');
+      tree.classList.add('tree-shake');
+      tree.addEventListener('animationend', () => tree.classList.remove('tree-shake'), { once: true });
+    });
+  });
+}
+f3Chart.setAfterUpdate(attachTreeShake)
+attachTreeShake()</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 50 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">50</div>
+    <h3>🌈 One-Click Theme Switcher</h3>
+    <span class="tag">Family Tree · CSS + JS</span>
+  </div>
+  <div class="example-desc">Buttons that instantly swap your whole tree's colors between ready-made themes. Try both buttons below!</div>
+  <div class="example-preview">
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;">
+      <div class="mini-tree" id="ft-50"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="demo-mini-btn" onclick="document.getElementById('ft-50').classList.remove('theme-sunset'); document.getElementById('ft-50').classList.add('theme-ocean');">🌊 Ocean</button>
+        <button class="demo-mini-btn" onclick="document.getElementById('ft-50').classList.remove('theme-ocean'); document.getElementById('ft-50').classList.add('theme-sunset');">🌅 Sunset</button>
+      </div>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code50')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code50">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into &lt;style&gt; and the buttons into &lt;body&gt;. Add your own theme by copying one whole block and changing its name and 4 colors!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.f3.theme-ocean div.card-male .card-inner, .f3.theme-ocean .card-male .person-icon svg {
+  background-color: #1d3f8f;
+  color: white;
+}
+.f3.theme-ocean div.card-female .card-inner, .f3.theme-ocean .card-female .person-icon svg {
+  background-color: #4fb0ff;
+  color: white;
+}
+.f3.theme-sunset div.card-male .card-inner, .f3.theme-sunset .card-male .person-icon svg {
+  background-color: #ee6b4d;
+  color: white;
+}
+.f3.theme-sunset div.card-female .card-inner, .f3.theme-sunset .card-female .person-icon svg {
+  background-color: #f2a922;
+  color: white;
+}</code></pre>
+    <div class="code-label-row">
+      <span class="code-label">🧱 HTML Code (copy into &lt;body&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>&lt;button onclick="document.getElementById('FamilyChart').classList.remove('theme-sunset'); document.getElementById('FamilyChart').classList.add('theme-ocean');"&gt;🌊 Ocean&lt;/button&gt;
+&lt;button onclick="document.getElementById('FamilyChart').classList.remove('theme-ocean'); document.getElementById('FamilyChart').classList.add('theme-sunset');"&gt;🌅 Sunset&lt;/button&gt;</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 51 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">51</div>
+    <h3>⭐ Highlight the Main Person's Card</h3>
+    <span class="tag">Family Tree · CSS only</span>
+  </div>
+  <div class="example-desc">Puts a bright outline around whoever the tree is currently focused on, so it's easy to see who's "main."</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-51"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code51')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code51">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your family tree's &lt;style&gt; section. Change <code>#f2a922</code> to any outline color, and <code>4px</code> to a thicker or thinner outline.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>.f3 div.card-main .card-inner {
+  outline: 4px solid #f2a922;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 52 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">52</div>
+    <h3>🖼️ Style the Tree's Canvas Background</h3>
+    <span class="tag">Family Tree · CSS only</span>
+  </div>
+  <div class="example-desc">Give the whole tree area its own background color, rounded corners, and border — like a frame around your tree.</div>
+  <div class="example-preview"><div class="mini-tree" id="ft-52"></div></div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code52')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code52">
+    <div class="instructions">
+      <b>How to use:</b> Copy the CSS into your family tree's &lt;style&gt; section.
+      <code>rgba</code> stands for red, green, blue, alpha — <code>alpha</code> is how see-through it is, from <code>0</code> (invisible) to <code>1</code> (solid). Try changing the numbers!
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">🎨 CSS Code (copy into &lt;style&gt;)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>#f3Canvas {
+  background-color: rgba(245, 245, 220, 0.7);
+  border-radius: 12px;
+  border: 1px dotted grey;
+}</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 53 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">53</div>
+    <h3>🃏 Try a Different Card Shape</h3>
+    <span class="tag">Family Tree · Initial Look</span>
+  </div>
+  <div class="example-desc">Your family tree can start out with totally different-looking cards. Compare two looks side by side!</div>
+  <div class="example-preview">
+    <div class="demo-compare-row">
+      <div><div class="mini-tree" id="ft-53a"></div><div class="demo-compare-label">'rect'</div></div>
+      <div><div class="mini-tree" id="ft-53b"></div><div class="demo-compare-label">'imageCircleRect'</div></div>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code53')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code53">
+    <div class="instructions">
+      <b>How to use:</b> Your base.html already has this line in its script — just change the word inside <code>setStyle('...')</code>.
+      Try <code>'rect'</code> for plain rectangle cards, or <code>'imageCircleRect'</code> for round photo cards (the default).
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (change this line in your existing script)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>const card = f3Chart.setCardHtml()
+  .setStyle('rect')   // <-- try 'imageCircleRect' too!
+  .setCardDisplay([
+    ["first name","last name"],
+    ["birthday"],
+  ]);</code></pre>
+  </div>
+</div>
+
+<!-- ============ EXAMPLE 54 ============ -->
+<div class="example-card" data-category="familytree">
+  <div class="example-head">
+    <div class="example-num">54</div>
+    <h3>↔️ Adjust Spacing Between Cards</h3>
+    <span class="tag">Family Tree · Initial Look</span>
+  </div>
+  <div class="example-desc">Make your tree feel cozy and tight, or big and spread out. Compare two spacings side by side!</div>
+  <div class="example-preview">
+    <div class="demo-compare-row">
+      <div><div class="mini-tree" id="ft-54a"></div><div class="demo-compare-label">Tight spacing</div></div>
+      <div><div class="mini-tree" id="ft-54b"></div><div class="demo-compare-label">Wide spacing</div></div>
+    </div>
+  </div>
+  <div class="example-actions">
+    <button class="btn-small btn-view-code" onclick="toggleCode('code54')">👀 View Code</button>
+  </div>
+  <div class="code-panel" id="code54">
+    <div class="instructions">
+      <b>How to use:</b> Your base.html already has these two lines — just change the numbers. Bigger numbers push cards further apart.
+    </div>
+    <div class="code-label-row">
+      <span class="code-label">⚙️ JavaScript Code (change these lines in your existing script)</span>
+      <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+    </div>
+    <pre><code>f3Chart
+  .setCardXSpacing(150)   // <-- bigger number = more space side-to-side
+  .setCardYSpacing(200)   // <-- bigger number = more space top-to-bottom</code></pre>
+  </div>
+</div>
+
+<p class="empty-state" id="emptyState" hidden>No examples in this category yet — more coming soon!</p>
+
+</div>
+
+<script>
+  function toggleCode(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  // Copies the exact text of the <code> block next to the button,
+  // indentation and all. Falls back to the old-school method because
+  // this page is opened straight from a file (no server), and the
+  // modern clipboard API can refuse to work in that situation.
+  function copyCode(button) {
+    const pre = button.parentElement.nextElementSibling;
+    const text = pre.querySelector('code').textContent;
+
+    function markCopied() {
+      const original = button.textContent;
+      button.textContent = '✅ Copied!';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = original;
+        button.classList.remove('copied');
+      }, 1500);
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(markCopied).catch(() => copyWithTextarea(text, markCopied));
+    } else {
+      copyWithTextarea(text, markCopied);
+    }
+  }
+
+  function copyWithTextarea(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+
+  // Category filter pills - shows only the example cards matching the
+  // clicked pill's data-filter, or all of them for "All".
+  const filterButtons = document.querySelectorAll('.categories button');
+  const emptyState = document.getElementById('emptyState');
+
+  function applyFilter(filter) {
+    const exampleCards = document.querySelectorAll('.example-card');
+    let visibleCount = 0;
+    exampleCards.forEach(card => {
+      const show = filter === 'all' || card.dataset.category === filter;
+      card.hidden = !show;
+      if (show) visibleCount++;
+    });
+    emptyState.hidden = visibleCount > 0;
+  }
+
+  // Keeps the current filter in the URL (as ?filter=...) so a Replay button's
+  // reload - or a manual page refresh - can restore it instead of resetting
+  // back to "All".
+  function updateFilterURL(filter) {
+    const query = filter === 'all' ? '' : ('?filter=' + encodeURIComponent(filter));
+    history.replaceState(null, '', location.pathname + query + location.hash);
+  }
+
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(btn.dataset.filter);
+      updateFilterURL(btn.dataset.filter);
+    });
+  });
+
+  // On load, re-apply whatever filter is saved in the URL, then scroll back
+  // to the example a Replay button pointed at (done manually - not left to
+  // the browser's own hash scrolling - since re-applying the filter can hide
+  // cards above it and shift the page after the browser already scrolled).
+  (function restoreStateFromURL() {
+    const savedFilter = new URLSearchParams(location.search).get('filter');
+    if (savedFilter) {
+      const match = Array.from(filterButtons).find(b => b.dataset.filter === savedFilter);
+      if (match) {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        match.classList.add('active');
+        applyFilter(savedFilter);
+      }
+    }
+    if (location.hash) {
+      const target = document.querySelector(location.hash);
+      if (target) target.scrollIntoView({ block: 'center' });
+    }
+  })();
+
+  // ===== Example-specific scripts get added below this line ===== //
+
+  // Example 17: Typewriter Effect - live, working version
+  (function () {
+    const el = document.getElementById('typewriter-text');
+    if (!el) return;
+    const text = "Welcome to my website!";
+    let i = 0;
+    function typeWriter() {
+      if (i < text.length) {
+        el.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, 100);
+      }
+    }
+    typeWriter();
+  })();
+
+  // Example 23: Shake On Click - live, working version
+  (function () {
+    const btn = document.getElementById('shake-demo-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => btn.classList.add('shaking'));
+    btn.addEventListener('animationend', () => btn.classList.remove('shaking'));
+  })();
+
+  // Example 31: Emoji Rain - live version, scoped to the small preview box
+  // (the copyable code below uses position:fixed to rain across the WHOLE
+  // page, which is what a kid's own site should do).
+  function startEmojiRain() {
+    const box = document.getElementById('rain-demo');
+    if (!box) return;
+    for (let i = 0; i < 12; i++) {
+      const emoji = document.createElement('div');
+      emoji.textContent = '🌧️';
+      emoji.className = 'demo-rain-emoji';
+      emoji.style.left = Math.random() * 90 + '%';
+      emoji.style.animationDelay = (Math.random() * 0.5) + 's';
+      box.appendChild(emoji);
+      emoji.addEventListener('animationend', () => emoji.remove());
+    }
+  }
+
+  // Example 33: Beautiful Alert - live, working version
+  function beautifulAlert(message) {
+    Swal.fire({
+      text: message,
+      confirmButtonColor: '#7c5cff'
+    });
+  }
+
+  // Example 34: Beautiful Confirm - live, working version
+  function beautifulConfirm(question) {
+    Swal.fire({
+      title: question,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes!',
+      cancelButtonText: 'No',
+      confirmButtonColor: '#1a6b56',
+      cancelButtonColor: '#ee6b4d'
+    });
+  }
+
+  // Example 35: Success Toast - live, working version
+  function funToast(message) {
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: message,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    });
+  }
+
+  // Example 36: Confetti Burst - live, working version
+  function funConfetti() {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }
+
+  // Example 37: Fireworks - live, working version
+  function funFireworks() {
+    confetti({ particleCount: 80, angle: 60,  spread: 55, origin: { x: 0 } });
+    confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } });
+  }
+
+  // Example 38: Click Ripple Effect - live, working version
+  (function () {
+    const rippleBtn = document.getElementById('ripple-demo-btn');
+    if (!rippleBtn) return;
+    rippleBtn.addEventListener('click', function (e) {
+      const rect = rippleBtn.getBoundingClientRect();
+      const span = document.createElement('span');
+      span.className = 'demo-ripple-span';
+      span.style.left = (e.clientX - rect.left - 10) + 'px';
+      span.style.top = (e.clientY - rect.top - 10) + 'px';
+      span.style.width = span.style.height = '20px';
+      rippleBtn.appendChild(span);
+      span.addEventListener('animationend', () => span.remove());
+    });
+  })();
+
+  // ===================================================================
+  // Family Tree examples (39-50) - each gets its own small, live,
+  // read-only family tree built from a simple 3-person sample, so kids
+  // can try every effect right here before copying it into their own tree.
+  // ===================================================================
+  const MINI_SAMPLE = [
+    { "id": "1", "data": { "first name": "Me",  "last name": "", "gender": "M" }, "rels": { "parents": ["2", "3"] } },
+    { "id": "2", "data": { "first name": "Dad", "last name": "", "gender": "M" }, "rels": { "children": ["1"], "spouses": ["3"] } },
+    { "id": "3", "data": { "first name": "Mom", "last name": "", "gender": "F" }, "rels": { "children": ["1"], "spouses": ["2"] } }
+  ];
+  const MINI_SAMPLE_FOOD = [
+    { "id": "1", "data": { "first name": "Me",  "last name": "", "gender": "M", "favourite food": "Pizza" },   "rels": { "parents": ["2", "3"] } },
+    { "id": "2", "data": { "first name": "Dad", "last name": "", "gender": "M", "favourite food": "Noodles" }, "rels": { "children": ["1"], "spouses": ["3"] } },
+    { "id": "3", "data": { "first name": "Mom", "last name": "", "gender": "F", "favourite food": "Salad" },   "rels": { "children": ["1"], "spouses": ["2"] } }
+  ];
+
+  function createMiniTree(containerId, opts) {
+    opts = opts || {};
+    if (typeof f3 === 'undefined' || !document.getElementById(containerId)) return null;
+    const chart = f3.createChart('#' + containerId, opts.sample || MINI_SAMPLE)
+      .setCardXSpacing(opts.xSpacing || 130)
+      .setCardYSpacing(opts.ySpacing || 140);
+    const cardHtml = chart.setCardHtml();
+    if (opts.style) cardHtml.setStyle(opts.style);
+    cardHtml.setCardDisplay(opts.displayFields || [["first name"]]);
+    chart.updateTree({ initial: true, tree_position: 'fit' });
+    return chart;
+  }
+
+  const ftCharts = {};
+  [39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50, 51, 52].forEach(n => {
+    ftCharts[n] = createMiniTree('ft-' + n);
+  });
+  ftCharts[46] = createMiniTree('ft-46', { sample: MINI_SAMPLE_FOOD, displayFields: [["first name"], ["favourite food"]] });
+
+  // Example 53: same tree, two different card shapes side by side
+  createMiniTree('ft-53a', { style: 'rect' });
+  createMiniTree('ft-53b', { style: 'imageCircleRect' });
+
+  // Example 54: same tree, tight vs wide spacing side by side
+  createMiniTree('ft-54a', { xSpacing: 70,  ySpacing: 80 });
+  createMiniTree('ft-54b', { xSpacing: 170, ySpacing: 190 });
+
+  // Example 42: confetti when you click any card
+  if (ftCharts[42]) {
+    const attach42 = () => document.querySelectorAll('#ft-42 .card').forEach(c =>
+      c.addEventListener('click', () => confetti({ particleCount: 60, spread: 60, origin: { y: 0.5 } }))
+    );
+    ftCharts[42].setAfterUpdate(attach42);
+    attach42();
+  }
+
+  // Example 43: flying emoji across the screen when you click a card
+  if (ftCharts[43]) {
+    function triggerFlyByDemo() {
+      const el = document.createElement('div');
+      el.textContent = '🚀';
+      el.className = 'demo-flyby';
+      el.style.top = (Math.random() * 70 + 10) + 'vh';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+    const attach43 = () => document.querySelectorAll('#ft-43 .card').forEach(c => c.addEventListener('click', triggerFlyByDemo));
+    ftCharts[43].setAfterUpdate(attach43);
+    attach43();
+  }
+
+  // Example 44: background changes when you click a card
+  // (scoped to the mini-tree's own box here, instead of document.body,
+  // so clicking it doesn't repaint the whole gallery page)
+  if (ftCharts[44]) {
+    const attach44 = () => document.querySelectorAll('#ft-44 .card').forEach(c => c.addEventListener('click', () => {
+      const colors = ['#ffd166', '#4fb0ff', '#4fd18a', '#ff5da2'];
+      document.getElementById('ft-44').style.background = colors[Math.floor(Math.random() * colors.length)];
+    }));
+    ftCharts[44].setAfterUpdate(attach44);
+    attach44();
+  }
+
+  // Example 45: beep sound when you click a card
+  if (ftCharts[45]) {
+    function playCardSoundDemo() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = 600;
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    }
+    const attach45 = () => document.querySelectorAll('#ft-45 .card').forEach(c => c.addEventListener('click', playCardSoundDemo));
+    ftCharts[45].setAfterUpdate(attach45);
+    attach45();
+  }
+
+  // Example 46: click the word "pizza" on a card to make emoji fall
+  if (ftCharts[46]) {
+    function dropEmojiRainDemo() {
+      for (let i = 0; i < 6; i++) {
+        const el = document.createElement('div');
+        el.textContent = '🍕';
+        el.className = 'demo-field-drop';
+        el.style.left = (5 + i * 16) + 'vw';
+        el.style.animationDelay = (i * 0.12) + 's';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }
+    }
+    const attach46 = () => {
+      document.querySelectorAll('#ft-46 .card').forEach(cardEl => {
+        cardEl.querySelectorAll('span, div').forEach(el => {
+          if (el.textContent.trim().toLowerCase() === 'pizza') {
+            el.style.cursor = 'pointer';
+            el.style.textDecoration = 'underline dotted';
+            el.addEventListener('mousedown', (e) => {
+              e.stopImmediatePropagation();
+              e.preventDefault();
+              dropEmojiRainDemo();
+            });
+          }
+        });
+      });
+    };
+    ftCharts[46].setAfterUpdate(attach46);
+    attach46();
+  }
+
+  // Example 47: heart floats up from a card when you click it
+  if (ftCharts[47]) {
+    function floatEmojiFromDemo(cardEl) {
+      const rect = cardEl.getBoundingClientRect();
+      const el = document.createElement('div');
+      el.textContent = '❤️';
+      el.className = 'demo-float-reaction';
+      el.style.left = (rect.left + rect.width / 2 - 15) + 'px';
+      el.style.top = rect.top + 'px';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+    const attach47 = () => document.querySelectorAll('#ft-47 .card').forEach(c => c.addEventListener('click', () => floatEmojiFromDemo(c)));
+    ftCharts[47].setAfterUpdate(attach47);
+    attach47();
+  }
+
+  // Example 48: curtain reveal - click each side to open it
+  (function () {
+    const l = document.getElementById('ft-48-curtain-l');
+    const r = document.getElementById('ft-48-curtain-r');
+    function openCurtainDemo(el, direction) {
+      el.classList.add(direction === 'left' ? 'opened-left' : 'opened-right');
+      setTimeout(() => el.remove(), 600);
+    }
+    if (l) l.addEventListener('click', () => openCurtainDemo(l, 'left'));
+    if (r) r.addEventListener('click', () => openCurtainDemo(r, 'right'));
+  })();
+
+  // Example 49: shake the whole tree when you click a card
+  if (ftCharts[49]) {
+    const attach49 = () => document.querySelectorAll('#ft-49 .card').forEach(c => c.addEventListener('click', () => {
+      const tree = document.getElementById('ft-49');
+      tree.classList.add('demo-tree-shaking');
+      tree.addEventListener('animationend', () => tree.classList.remove('demo-tree-shaking'), { once: true });
+    }));
+    ftCharts[49].setAfterUpdate(attach49);
+    attach49();
+  }
+
+  // Example 50: theme switcher buttons are wired directly with onclick in the HTML above.
+</script>
+
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <title>Tap To 16!</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&display=swap" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <!-- CSS Starts Here -->
+      <style>
+        body {
+            background-image: url('https://img.magnific.com/premium-vector/cartoon-forest-illustration-with-colorful-trees_284645-2155.jpg?semt=ais_hybrid&w=740&q=80');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;                /* Removes default browser margins */
+            display: flex;
+            justify-content: center;  /* Centers horizontally */
+            align-items: center;      /* Centers vertically */
+            min-height: 100vh;        /* Forces body to be at least full screen height */
+            font-family: "Gabarito", system-ui;
+            font-size: larger;
+        }
+
+        #game-container {
+            margin: auto;
+            background-color: skyblue;
+            padding: 10px;
+            width: fit-content;
+            border: 10px solid blue;
+            border-radius: 12px;
+        }
+
+        #game-board, .game-btn, .clock {
+            text-align: center;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        #game-board {
+            position: relative;
+        }
+
+        .countdown-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 150px;
+            font-weight: 900;
+            color: yellow;
+            text-shadow: 2px 2px 8px black;
+            transform: translate(-50%, -50%) scale(0.4);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .countdown-number.pop {
+            animation: countdownPop 0.8s ease-out forwards;
+        }
+
+        @keyframes countdownPop {
+            0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+            30%  { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+        }
+
+        #game-board table {
+            border-radius: 3px;
+            background-color: antiquewhite;
+            margin: auto;
+            border: 3px solid black;
+        }
+
+        #game-board table td, #game-board table th, #game-board table tr {
+            border: 3px solid black;
+        }
+
+        #game-board th, td {
+            background-color: rgb(168, 222, 214);
+        }
+
+        #game-board td {
+            width: 100px;
+            height: 100px;
+            font-size: 50px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        #game-board td.clickable {
+            cursor: pointer;
+        }
+
+        #game-board td.clickable:hover, td.highlight {
+            background-color: rgb(193, 234, 70);
+        }
+
+        .instructions {
+            font-size: smaller;
+        }
+
+        .credits {
+            margin-top: 5px;
+            text-align: center;
+            color: grey;
+            font-size: small;
+            font-weight: bold;
+        }
+
+        .game-control {
+            display: flex;
+            justify-content: center;
+            gap: 1em;
+            flex-direction: row;
+            margin: 10px auto;
+        }
+
+        .game-btn:hover {
+            background-color: rgb(151, 166, 216);
+        }
+
+        .game-btn {
+            border-width: 0px;
+            border-radius: 5px;
+            box-shadow: 1px 0.7px 0.3px grey;
+            width: 100%;
+            padding: 1em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        .clock-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            margin: 10px 0;
+            padding: 10px;
+            background: lightyellow;
+            border: 1px solid;
+            font-size: x-large;
+        }
+
+        .clock {
+            display: inline-block;
+            text-align: center;
+        }
+        </style>
+
+        <!-- CSS Ends Here -->
+
+    </head>
+
+    <body>
+        <div id="game-container">
+            <div id="game-board">
+                <h1>Tap to 16!</h1>
+                <div class="countdown-number"></div>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td class="c11"></td>
+                            <td class="c12"></td>
+                            <td class="c13"></td>
+                            <td class="c14"></td>
+                        </tr>
+                        <tr>
+                            <td class="c21"></td>
+                            <td class="c22"></td>
+                            <td class="c23"></td>
+                            <td class="c24"></td>
+                        </tr>
+                        <tr>
+                            <td class="c31"></td>
+                            <td class="c32"></td>
+                            <td class="c33"></td>
+                            <td class="c34"></td>
+                        </tr>
+                        <tr>
+                            <td class="c41"></td>
+                            <td class="c42"></td>
+                            <td class="c43"></td>
+                            <td class="c44"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class='clock-container'>
+                <span class='clock-label'>Time Elapsed:</span><span class="clock">00:00</span>
+            </div>
+            <p class='instructions'>
+                <b>How to Play:</b><br>
+                Tap from 1 to 16 as quickly as you can!
+            </p>
+            <div class="game-control">
+                <button class="game-btn" id="start" style='background-color: #6fe879'>Play</button>
+                <button class="game-btn" id="stop" hidden style="background-color: pink">Stop</button>
+            </div>
+            <div class='credits'>
+                Created by Qi Wei
+            </div>
+
+
+            <!-- Javascript Starts Here -->
+            <script>
+
+
+                 // Don't touch this part! Leave it exactly as it is.
+                function funConfetti() {
+                    confetti({
+                        particleCount: 150,   // <-- you CAN change this!
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                };
+
+                // Don't touch this part! Leave it exactly as it is.
+                function funFireworks() {
+                  confetti({ particleCount: 80, angle: 60,  spread: 55, origin: { x: 0 } });
+                  confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } });
+                };
+
+                // Don't touch this part! Leave it exactly as it is.
+                async function beautifulConfirm(question) {
+                    const result = await Swal.fire({
+                        title: question,
+                        icon: 'question',
+                        showCancelButton: true,
+                            confirmButtonText: 'Yes!',    // <-- you CAN change this text!
+                            cancelButtonText: 'No',       // <-- you CAN change this text!
+                            confirmButtonColor: '#1a6b56',
+                            cancelButtonColor: '#ee6b4d'
+                        });
+                    return result.isConfirmed;
+                };
+
+
+                const DEFAULT_NUMBER_LIST = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+
+                // Music Files
+                const GAME_MUSIC_FILE = 'https://data.freetouse.com/music/tracks/a26d27b1-8b82-c165-eb24-b20d1fa4d661/file/mp3';
+
+                const DROPLET_SOUND_FILE = 'https://cms-artifacts.motionarray.com/content/motion-array/356755/Cartoon_Pop_Up_mp3_1710852041.mp3?Expires=2026212182898&Key-Pair-Id=K2ZDLYDZI2R1DF&Signature=ydHD~n5lmGnCkv9vn~NPO-YvdFmBXupBFhzEwPAYyJng1I3kFSZdYBo6chkzIe10vABd0jlmWbbEQndI8-3CXpGZAFI1tg-BFStkO~HvCff1BqjPaJ6ThV7qKqttOJjpQJCP0DQ-lY2t7uEVpzurlj6KETWfNAT-MUJc832Evyi0EKCFK9Hr5udbEiz0mU5MlBHVZ7bsrBmGIjDxhnSeuYZxkAwR8XX0aHmIUDLcJkVm-0m7v7nIPWqWddNmxgdqguY4zcRFHSrlV7GzZi6-cy5rXNq8IawkCZuVlVyLV3YDCSeeh0bghwzIn-EZ7jkzI~9huMNpIYB0rFX9i-n0jQ__';
+
+                const MOUSE_CLICK_SOUND_FILE = 'https://cms-artifacts.motionarray.com/content/motion-array/799005/Mouse_Click_mp3_1710930994.mp3?Expires=2026291144998&Key-Pair-Id=K2ZDLYDZI2R1DF&Signature=qnNamq-Em6-ZVp6YQV~ydwTSDyks~4B8AgM7rE5qylKvLxUpRHtm2plFtdcCQFED4xdlrSs2SLxRCoJ-JUQ6f7DkEbIaK~8O3y9nWwXJ3qb0UYsfpy3oeN9PwokKcIo-urI3uF9TDxlRwCbDTIVATLkOG0z3bToVUc~YDx844GDUR0goeaCIGAl9dNOLDLJY86gL~DCHqcguYQnAiQehyHzJfrdgs7lIAPvZ6GUWWrVhNq6iJZ6AarEMsbBvjUH1TVPpSjNRq--WpOb6zhOAhMJqf~5~Aqn9ehvcfcg5jGGYmXZWzt2h3xgd75KcQvQSOWek5VeJQKm5qbIzvvpYtA__';
+
+                const WRONG_ANSWER_SOUND_FILE = "https://cms-artifacts.motionarray.com/content/motion-array/1223405/Wrong_Answer_mp3_1711002182.mp3?Expires=2026362332182&Key-Pair-Id=K2ZDLYDZI2R1DF&Signature=soOVr7uXQgUaqvoT-VvYWJviHBKYOWGkZyu0Dbr~btGANvTodnHIlGs4wNHUIPtqMw5gYJgqZf2zOwz6h4mc-HdCGz9b0vHyuKZM4qo6lAqi2E1LqqTJmhA4UVMAfF08GvJt~hGr5hQ7AzQI6aMOLW2dXGZvJzGtH4WODpUKdWp2CDgCUt2BObwlL3ILYhAafbrRrjUyZzSHZAKY-IJgQK41jDvgJmaK48-w21xBahHnnLC0j4vacYSKyI5a-aAZh9RXc~aTttW3Qvl6flaJfLlLwGU2hVAiLmYZngpCHbIJ5kueuGTjCfqgpP4rI4CTMN3L8c3fFtMtPop04hBXVw__";
+
+                const GAME_START_SOUND_FILE = "https://cdn.pixabay.com/audio/2022/11/05/audio_997c8fe344.mp3"
+                const VICTORY_SOUND_FILE = "https://cdn.pixabay.com/audio/2025/09/29/audio_e359d7446f.mp3"
+                const GAME_OVER_SOUND_FILE = "https://cdn.pixabay.com/audio/2024/12/19/audio_0dff0c1da9.mp3"
+
+                const gameMusic = new Audio(GAME_MUSIC_FILE);
+                const mouseClickSound = new Audio(MOUSE_CLICK_SOUND_FILE);
+                const wrongAnswerSound = new Audio(WRONG_ANSWER_SOUND_FILE);
+                const gameStartSound = new Audio(GAME_START_SOUND_FILE);
+                const victorySound = new Audio(VICTORY_SOUND_FILE);
+                const gameOverSound = new Audio(GAME_OVER_SOUND_FILE);
+
+                gameMusic.loop = true; // So that it doesn't stop if we play till the end of the audio file.
+                gameMusic.volume = 0.4; // 40% of original sound cause it is quite loud compared to other sounds.
+
+                let countingDown = false;
+                let countdownTimeouts = [];
+                let gameData = {
+                    inProgress: false,
+                    startTime: null,
+                    timer: null,
+                    nextNumber: 1
+                };
+
+                function playGameMusic() {
+                    gameMusic.play();
+                }
+
+                function stopGameMusic() {
+                    gameMusic.pause();
+                    gameMusic.currentTime = 0;
+                }
+
+                function findCellByClass(cellClass) {
+                    return document.querySelector(`td.${cellClass}`);
+                }
+
+                function shuffleList(array) {
+                    const copy = [...array];
+                    for (var i = copy.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var temp = copy[i];
+                        copy[i] = copy[j];
+                        copy[j] = temp;
+                    }
+                    return copy;
+                }
+
+                function fillBoardWithNumbers(numberList) {
+                    let index = 0;
+                    for (let row = 1; row <= 4; row++) {
+                        for (let column = 1; column <= 4; column++) {
+                            let cellClass = `c${row}${column}`;
+                            let cell = findCellByClass(cellClass)
+                            cell.innerHTML = numberList[index]
+                            index = index + 1
+                        }
+                    }
+                }
+
+                function toggleStartAndStopButton() {
+                    if (gameData.inProgress || countingDown) {
+                        // Game not in progress. Stop is not hidden.
+                        document.getElementById('start').hidden = true
+                        document.getElementById('stop').hidden = false
+                    } else {
+                                // Game not in progress. Start is not hidden.
+                        document.getElementById('start').hidden = false
+                        document.getElementById('stop').hidden = true
+                    }
+                }
+
+                function resetBoard() {
+                    document.querySelectorAll('#game-board td').forEach(function (element) {
+                        element.innerHTML = ''
+                        element.classList.remove('clickable')
+                        element.classList.remove('highlight')
+                    })
+                }
+
+                function prepareLevel() {
+                    let shuffledNumbers = shuffleList(DEFAULT_NUMBER_LIST);
+                    fillBoardWithNumbers(shuffledNumbers);
+                    gameData.nextNumber = 1
+                }
+
+                function resetLevel() {
+                    resetBoard();
+                    gameData.nextNumber = 1;
+                    gameData.inProgress = false;
+                }
+
+                function playGame() {
+                    countDownAndStart()
+                    toggleStartAndStopButton()
+                }
+
+                function countDownAndStart() {
+                    countingDown = true;
+                    resetLevel();
+                    showCountdownNumbers();
+                    gameStartSound.onended = () => {
+                        countingDown = false;
+                        prepareLevel()
+                        startGame();
+                    };
+                    gameStartSound.play();
+                }
+
+                function showCountdownNumbers() {
+                    const el = document.querySelector('.countdown-number');
+                    countdownTimeouts = [3, 2, 1, "Go"].map((n, i) => setTimeout(() => {
+                        el.textContent = n;
+                        el.classList.remove('pop');
+                        void el.offsetWidth;
+                        el.classList.add('pop');
+                    }, i * 1050));
+                }
+
+                function clearCountdownNumbers() {
+                    countdownTimeouts.forEach(clearTimeout);
+                    countdownTimeouts = [];
+                    const el = document.querySelector('.countdown-number');
+                    el.textContent = '';
+                    el.classList.remove('pop');
+                }
+
+                function startGame() {
+                    clearCountdownNumbers();
+                    gameData.inProgress = true
+                    playGameMusic();
+                    startTimer();
+                    toggleStartAndStopButton();
+                }
+
+                // This is when user end the game early and gives up.
+                function stopGame() {
+                    clearCountdownNumbers();
+                    gameStartSound.onended = null;
+                    gameStartSound.pause();
+                    gameStartSound.currentTime = 0;
+                    gameData.inProgress = false
+                    gameOverSound.play();
+                    stopGameMusic();
+                    stopTimer();
+                    resetTimer();
+                    countingDown = false;
+                    toggleStartAndStopButton();
+                    resetLevel();
+                }
+
+                // This is when user wins the game.
+                function endGame() {
+                    stopGameMusic();
+                    stopTimer();
+                    victorySound.play();
+                    funConfetti();
+                    funFireworks();
+                    gameData.inProgress = false;
+                    toggleStartAndStopButton();
+
+                    // Disable clicks on remaining cells
+                    document.querySelectorAll('#game-board td').forEach((el) => {
+                        el.classList.remove('clickable');
+                    });
+                }
+
+                function startTimer() {
+                    document.querySelectorAll('#game-board td').forEach(function (element) {
+                        element.classList.add('clickable')
+                    })
+                    gameData.inProgress = true
+                    gameData.startTime = performance.now();
+                    gameData.timer = setInterval(updateTimeElapsed, 100)
+                }
+
+                function updateTimeElapsed() {
+                    let timePassed = (performance.now() - gameData.startTime) / 1000
+                    document.querySelector('.clock').innerHTML = formatDisplayTime(timePassed)
+                }
+
+                function stopTimer() {
+                    clearInterval(gameData.timer);
+                    gameData.timer = null;
+                    updateTimeElapsed();
+                }
+
+                function resetTimer() {
+                    document.querySelector('.clock').innerHTML = formatDisplayTime(0)
+                    gameData.startTime = null;
+                }
+
+                function formatDisplayTime(seconds) {
+                  const wholeSeconds = Math.floor(seconds);
+                  const milliseconds = Math.round((seconds - wholeSeconds) * 1000);
+
+                  const padSeconds = String(wholeSeconds).padStart(2, '0');
+                  const padMillis = String(milliseconds).padStart(3, '0');
+
+                  return `${padSeconds}.${padMillis}`;
+                }
+
+
+                  function registerEvents() {
+                    document.getElementById('start').addEventListener('click', async (event) => {
+                        let answer = await beautifulConfirm('Do you want to play?');
+                        if (answer == true) {
+                            playGame();
+                        }
+                    })
+
+                    document.getElementById('stop').addEventListener('click', async (event) => {
+                        var answer = await beautifulConfirm('Stop Playing?');
+                        if (answer == true) {
+                            stopGame();
+                        }
+                    });
+
+                    document.querySelectorAll('#game-board td').forEach((element) => {
+                        element.addEventListener('click', (event) => {
+
+                            const cell = event.currentTarget;
+
+                            if (cell.classList.contains('clickable')) {
+                                if (gameData.nextNumber == parseInt(cell.innerHTML)) {
+                                    if (gameData.inProgress) {
+                                        mouseClickSound.currentTime = 0;
+                                        mouseClickSound.play();
+                                    }
+                                    cell.classList.remove('clickable')
+                                    cell.classList.add('highlight')
+                                    if (gameData.nextNumber < DEFAULT_NUMBER_LIST.length) {
+                                        gameData.nextNumber++;
+                                    } else {
+                                        endGame();
+                                    }
+                                } else {
+                                    if (gameData.inProgress) {
+                                        wrongAnswerSound.currentTime = 0;
+                                        wrongAnswerSound.play();
+                                    }
+                                }
+                            }
+                        })
+                    });
+                }
+
+                // Initialize Game
+                registerEvents();
+            </script>
+            <!-- Javascript Ends Here -->
+
+    </body>
+</html>
+
+

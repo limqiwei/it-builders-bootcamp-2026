@@ -1,0 +1,77 @@
+<style>
+
+    .container.bordered {
+        padding: 1em;
+        border: 1px solid #bbb8b8;
+        box-shadow: 0.2px 0.3px 0.7px #D8D8D8;
+    }
+
+    .container {
+        margin: auto;
+        width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .number-input {
+        height: 25px;
+        font-size: 1.5rem;
+        background-color: rgb(237, 238, 242);
+        border-radius: 3px;
+        border: 0.5px solid black
+    }
+
+    button[type='submit'] {
+        padding: 1em;
+        font-size: 1em;
+        font-weight: bold;
+        text-transform: uppercase;
+        background-color: rgb(255, 255, 255);
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    #doSum:hover {
+        background-color: rgb(221, 71, 164);
+    }
+
+
+</style>
+<div id="sumForm" class="container bordered">
+    <h1>Sum it up!</h1>
+    <div class="container">
+            <label for="first">First Number</label>
+            <input id="first" class="number-input" type="number" name="first" required>
+            <label for="second">Second Number</label>
+            <input id="second" class="number-input" type="number" name="second" required>
+            <br>
+            <button id="doSum">Sum it up!</button>
+        </div>
+    </div>
+<div id="result" class="container bordered" style="display: none;">
+        <h1>Result</h1>    
+        <div>
+            <div id="resultMessage"></div>
+            <button id="restart">Restart!</button>
+        </div>
+    </div>
+<script>
+
+    document.getElementById("doSum").addEventListener('click', (event) => {
+        const firstValue = document.getElementById('first').value;
+        const secondValue = document.getElementById('second').value;
+        const total = parseInt(firstValue) + parseInt(secondValue);
+        const result = `The total of <strong>${firstValue}</strong> and <strong>${secondValue}</strong> is <strong>${total}`;
+
+        document.getElementById('resultMessage').innerHTML = result;
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('sumForm').style.display = 'none';
+
+    });
+
+    document.getElementById("restart").addEventListener('click', (event) => {
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('sumForm').style.display = 'block';
+    });
+</script>

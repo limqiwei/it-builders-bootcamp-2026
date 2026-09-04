@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- This sets the title of your browser tab. Change it to see what happens -->
+  <title>Teacher Joshua's Family Tree</title>
+
+  <!-- We are loading the tools and code to help us get started quickly -->
+<script src="https://unpkg.com/d3@7"></script>
+<script src="https://unpkg.com/family-chart@latest/dist/family-chart.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/family-chart@latest/dist/styles/family-chart.css">
+  <script src="export_helper.js"></script>
+
+  <!-- This is where we put our CSS styles -->
+  <style>
+
+  #toolbar { min-height: 44px; background: bisque;} 
+
+  /* This sets that font for all items within the <body> tag. */
+  body {
+    font-family: Roboto;
+  }
+
+  .f3 {
+    --background-color: white;
+    --text-color: black;
+  }
+
+  /*
+  This adjust the style for the background of the male card.
+  Change the background color to your desired color for male member cards.
+  */
+  .f3 div.card-male .card-inner, .f3 div.card-male .person-icon svg {
+      background-color: #2e259d;
+      color: white;
+  }
+
+  .f3 div.card-main .card-inner {
+    outline: 4px solid yellow;
+  }
+
+  /* 
+  This adjust the style for the background of the female card.
+  Change the background color to your desired color for female member cards.
+  */
+  .f3 div.card-female .card-inner, .f3 div.card-female .person-icon svg {
+      background-color: #c52a9c;
+      color: white;
+  }
+
+  /* This sets the style for the family tree canvas 
+  - rgba stands for red, green, blue, alpha.
+  - alpha just means how 'transparent it looks like'. alpha is given a value from 0 to 1. 
+    0 means transparent and 1 is means it is not transparent.
+  */
+  #f3Canvas {
+    background-color: rgba(245, 245, 220, 0.7);
+    border-radius: 12px;
+    border: 1px dotted grey;
+  }
+
+  /* Changes the family relationship color and width */
+  .f3 .links_view path.link {
+    stroke: purple;
+    stroke-width: 5px;
+  }
+
+  /* X-Wing button */
+  #xwing-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+    background: #000;
+    color: #ffe81f;
+    border: 2px solid #ffe81f;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #xwing-btn:hover {
+    background: #ffe81f;
+    color: #000;
+  }
+
+  /* The X-Wing image that flies across */
+  .xwing-flyer {
+    position: fixed;
+    width: 120px;
+    pointer-events: none;
+    z-index: 1000;
+    /* start off-screen right, vertically random (set by JS) */
+    right: -140px;
+    animation: xwing-fly 2s linear forwards;
+  }
+
+  @keyframes xwing-fly {
+    0%   { transform: translateX(0)   rotate(-10deg) scaleX(-1); }
+    100% { transform: translateX(calc(-100vw - 280px)) rotate(-5deg) scaleX(-1); }
+  }
+
+  /* Falling steak */
+  .steak-drop {
+    position: fixed;
+    top: -120px;
+    width: 100px;
+    pointer-events: none;
+    z-index: 1000;
+    animation: steak-fall 1.6s cubic-bezier(0.3, 0, 0.8, 1) forwards;
+  }
+
+  @keyframes steak-fall {
+    0%   { transform: translateY(0)    rotate(0deg);   opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  <style>
+    .split-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Background content */
+.revealed-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f4f4f5;
+  z-index: 1;
+}
+
+/* Common screen styles */
+.screen {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  user-select: none;
+}
+
+.screen-1 {
+  left: 0;
+  background-color: #2563eb;
+  color: white;
+}
+
+.screen-2 {
+  right: 0;
+  background-color: #1e293b;
+  color: white;
+}
+
+/* Keyframe animations */
+@keyframes splitLeft {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes splitRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Classes applied by JS */
+.slide-away-left {
+  animation: splitLeft 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+.slide-away-right {
+  animation: splitRight 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+  </style>
+
+
+
+  </style>
+</head>
+<body>
+  <div id="toolbar"></div>
+  <button id="xwing-btn" title="May the Force be with you">🚀 Fly X-Wing</button>
+  <h1 id="title" style='text-align: center; padding: 20px; text-transform: uppercase; color: black;'>Teacher Joshua's Family Tree</h1>
+  <div style="position:relative">
+  <div id="FamilyChart" class="f3" style="width:90%;height:800px;margin:auto;z-index: 2;"></div> 
+  
+  <div class='screen left'
+  style="position: absolute; top: 0; left: 5%; z-index: 3; width: 45%; height: 800px; margin: auto; background-color: red; border-radius: 3px; background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1nAFY1C5BJRiZme_RvqMkgQyjFN3v_1kM5GYQPkUvYH3iTHxZrLk2CNh4&s=10'); background-size: cover; background-repeat: no-repeat;"
+  ><div style="color:black;">Click to reveal</div></div>
+
+  <div class='screen right'
+  style="position: absolute; top: 0; right: 5%; z-index: 3; width: 45%; height: 800px; margin: auto; background-color: blue; border-radius: 3px; background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1nAFY1C5BJRiZme_RvqMkgQyjFN3v_1kM5GYQPkUvYH3iTHxZrLk2CNh4&s=10'); background-size: cover; background-repeat: no-repeat;"
+  ><div style="color:black;">Click to reveal</div></div>
+  </div>
+
+
+  <div>
+    <dialog id="my-dialog" popover>
+      <img id="dialog-preview-img" src="" alt="Expanded preview" style="max-width: 100%; height: auto; display: block; margin-bottom: 1rem;" />
+      <button popovertarget="my-dialog" popovertargetaction="hide">Close</button>
+    </dialog>
+  </div>
+
+
+
+  <script>  
+  // The toolbar goes up first, on its own, so that a failure further down cannot
+  // take it with it - and so a missing export_helper.js is loud, not silent.
+  const helper = typeof ExportHelper === 'undefined' ? null : ExportHelper
+
+  if (helper) {
+    helper.init({
+      storageKey: 'family-tree-demo',
+      exportPrefix: 'family-tree',
+      mount: '#toolbar'
+    })
+  } else {
+    document.getElementById('toolbar').textContent =
+      'export_helper.js did not load - check it sits next to index.html.'
+    console.error('export_helper.js did not load')
+  }
+
+  </script>
+  <script>
+    // This is a sample data to help you.
+    const SAMPLE = [
+      {
+        "id": "1",
+        "data": {"first name": "Me", "last name": "", "birthday": "1998", "gender": "M"},
+        "rels": {"parents": ["2", "3"]}
+      },
+      {
+        "id": "2",
+        "data": {"first name": "Dad", "last name": "", "birthday": "1961", "gender": "M"},
+        "rels": {"children": ["1"], "spouses": ["3"]}
+      },
+      {
+        "id": "3",
+        "data": {"first name": "Mom", "last name": "", "birthday": "1964", "gender": "F"},
+        "rels": {"children": ["1"], "spouses": ["2"]}
+      }
+    ]
+
+    const f3Chart = f3.createChart('#FamilyChart', SAMPLE)
+
+    // Siblings are not stored - the library works them out from shared parents -
+    // and it only draws them for the currently focused card, off by default.
+    f3Chart
+    .setShowSiblingsOfMain(true)
+    .setAncestryDepth(100)
+    .setProgenyDepth(100)
+    .setCardXSpacing(150)
+    .setCardYSpacing(200)
+
+    const card = f3Chart.setCardHtml()
+      .setStyle('imageCircleRect')
+      .setCardDisplay([
+        ["first name","last name"],
+        ["birthday"],
+        ["favourite food",],
+        ["hobby",],
+
+      ]);
+
+    // createChart on its own is a viewer. This is what makes it editable: click a
+    // card and a form opens, with its own add-relative and delete buttons.
+    // Add a line to the list and every person grows that field.
+    const editTree = f3Chart.editTree()
+      .fixed()
+      .setFields([
+        { id: 'first name', type: 'text',     label: 'First name' },
+        { id: 'last name',  type: 'text',     label: 'Last name' },
+        { id: 'birthday',   type: 'text',     label: 'Birthday' },
+        { id: 'about',      type: 'textarea', label: 'About them' },
+        { id: 'avatar',      type: 'text', label: 'Avatar' },
+        { id: 'favourite food',   type: 'text',     label: 'Favourite Food' },
+        { id: 'hobby',   type: 'text',     label: 'Hobby' },
+      ])
+      .setEditFirst(true);
+
+    editTree.setEdit()
+    editTree.setCardClickOpen(card)
+
+    // Everything about saving, exporting and importing lives in export_helper.js.
+    // It reads this chart and writes back to it; it never builds one. Handing it
+    // the edit form is what turns on save-on-every-edit.
+    const saved = helper ? helper.setChart(f3Chart, editTree).load() : null
+
+    if (saved) {
+      helper.apply(saved.data, saved.mainId)   // redraws for us
+      helper.setStatus('Loaded the tree saved in this browser.')
+      f3Chart.updateTree({tree_position: 'fit'})
+    } else {
+      f3Chart.updateTree({initial: true, tree_position: 'fit'})
+    }
+
+    (() => {
+
+
+      // This will change the background image of your website.
+      // Try changing the url below
+      function changeBackground() {
+        var url = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperaccess.com%2Ffull%2F11803.jpg&f=1&nofb=1&ipt=1b5160e5cea109872a649dbb35df0c5e26f5da976b7092d60bc77231fa0a8c5b'
+        document.body.style.backgroundImage = `url(${url})`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundRepeat = 'no-repeat'
+      }
+
+      // Run these actions below when the page loads.
+      changeBackground();
+    })()
+  </script>
+  <script>
+    // Drop steaks when Joshua's "favourite food" text is clicked
+    const STEAK_IMG = '2022-11-14_22-46-49_030-2022-11-15T06_02_32.033-3967886375.jpg'
+
+    function dropSteaks() {
+      for (let i = 0; i < 6; i++) {
+        const img = document.createElement('img')
+        img.src = STEAK_IMG
+        img.classList.add('steak-drop')
+        img.style.left = (5 + i * 16) + 'vw'
+        img.style.animationDelay = (i * 0.12) + 's'
+        document.body.appendChild(img)
+        img.addEventListener('animationend', () => img.remove())
+      }
+    }
+
+    // Track which elements already have the listener so we don't double-add.
+    const steakListened = new WeakSet()
+
+    function attachSteakListeners() {
+      // The library wraps each card in a <foreignObject> whose first child div
+      // carries data-id. We walk all card field spans and match by text.
+      document.querySelectorAll('#FamilyChart .card').forEach(cardEl => {
+        // Identify Joshua's card by checking if any field says "Steak"
+        cardEl.querySelectorAll('span, div').forEach(el => {
+          if (steakListened.has(el)) return
+          if (el.textContent.trim().toLowerCase() === 'steak') {
+            steakListened.add(el)
+            el.style.cursor = 'pointer'
+            el.style.textDecoration = 'underline dotted'
+            // Use mousedown + stopImmediatePropagation so the library's
+            // click handler on div.card never fires.
+            el.addEventListener('mousedown', (e) => {
+              e.stopImmediatePropagation()
+              e.preventDefault()
+              dropSteaks()
+            })
+          }
+        })
+      })
+    }
+
+    function setupImagePopover() {
+  const dialog = document.getElementById('my-dialog');
+  const previewImg = document.getElementById('dialog-preview-img');
+
+  if (!dialog || !previewImg) return;
+
+  const images = document.querySelectorAll('#FamilyChart .card img');
+
+  images.forEach((img) => {
+    img.addEventListener('click', (event) => {
+      // Prevent parent click events if necessary
+      event.stopPropagation();
+
+      if (img.src) {
+        previewImg.src = img.src;
+        previewImg.alt = img.alt || 'Preview image';
+        dialog.showPopover();
+      }
+    });
+  });
+}
+
+// Call immediately
+setupImagePopover();
+
+    // Run after every tree redraw (library recreates card DOM each time).
+    f3Chart.setAfterUpdate(attachSteakListeners)
+    attachSteakListeners();
+  </script>
+  <script>
+    document.getElementById('xwing-btn').addEventListener('click', function () {
+      const img = document.createElement('img');
+      img.src = '811214_star_wars_x_wing_spaceship_futuristic_space_sci_fi_xwing.jpg';
+      img.classList.add('xwing-flyer');
+      // random vertical position between 10% and 80% of the viewport height
+      img.style.top = (Math.random() * 70 + 10) + 'vh';
+      document.body.appendChild(img);
+      // remove the element after the animation ends so they don't pile up
+      img.addEventListener('animationend', () => img.remove());
+    });
+
+
+function fadeAndRemove(element, duration = 600) {
+}
+
+function fadeAndRemove(element, duration) {
+       const animation = element.animate(
+    [
+      { opacity: 1 },
+      { opacity: 0 }
+    ],
+    {
+      duration: duration,
+      easing: 'ease-out',
+      fill: 'forwards'
+    }
+
+  );
+
+               animation.onfinish = () => {
+    element.remove();
+  };
+};
+
+function fadeAndRemoveAllCurtain() {
+  let screens = document.querySelectorAll('div.screen');
+  screens.forEach((e) => fadeAndRemove(e, 500));
+};
+
+    function curtainReveal() {
+      document.querySelectorAll('div.screen').forEach((screen) => {
+        
+        screen.addEventListener('click', function(event) {
+  
+
+       // No prompt: fadeAndRemove(this, 500);
+
+          // With prompt
+        // let confirmed = confirm('Are you sure?')
+        // if (confirmed) {
+        //   fadeAndRemove(this, 500);
+        // }
+      
+      splitAndReveal();
+      });
+      });
+    }
+
+    function splitAndReveal() {
+  const s1 = document.querySelector('.screen.left');
+  const s2 = document.querySelector('.screen.right');
+
+  function runSplit() {
+    const animOptions = {
+      duration: 700,
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      fill: 'forwards'
+    };
+
+    const anim1 = s1.animate([
+      { transform: 'translateX(0)', opacity: 1 },
+      { transform: 'translateX(-100%)', opacity: 0 }
+    ], animOptions);
+
+    s2.animate([
+      { transform: 'translateX(0)', opacity: 1 },
+      { transform: 'translateX(100%)', opacity: 0 }
+    ], animOptions);
+
+    // Remove from DOM once finished
+    anim1.onfinish = () => {
+      s1.remove();
+      s2.remove();
+    };
+  }
+
+  s1.addEventListener('click', runSplit);
+  s2.addEventListener('click', runSplit);
+}
+
+
+
+    (function(){
+      curtainReveal();
+      splitAndReveal();
+    })();
+  </script>
+</body>
+</html>

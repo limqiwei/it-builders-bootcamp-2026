@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { 
+      background: skyblue;
+      font-family: Arial;
+      color: purple;
+    }
+    img { 
+      border: 5px solid orange; 
+      border-radius: 12px;
+    }
+    button {
+      border-radius: 12px;
+      background-color: yellow;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>IT Builder Bootcamp</h1>
+  <img src='bootcamp_image.png' height=200>
+  <br><br>
+  <div>We are currently on Day 2 of our IT Builders Bootcamp!</div>
+  <br>
+  <button id="clickMeButton">CLICK ME</button>
+
+  <script>
+    document.getElementById("clickMeButton").addEventListener('click', (event) => {
+      // event.currentTarget tells us which html element was clicked
+      // In this case this is the button with id 'clickMeButton'
+      event.currentTarget.style.backgroundColor = 'orange'
+    });
+  </script>
+</body>
+</html>
